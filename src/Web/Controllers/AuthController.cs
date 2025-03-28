@@ -6,14 +6,13 @@ using Microsoft.Owin.Security.Cookies;
 
 namespace Web.Controllers;
 
+[RoutePrefix("auth")]
 public class AuthController : Controller
 {
-    public AuthController() { }
-
     private IAuthenticationManager AuthenticationManager =>
         HttpContext.GetOwinContext().Authentication;
 
-    [HttpGet]
+    [Route("login")]
     public ActionResult Login(string returnUrl = "")
     {
         var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);

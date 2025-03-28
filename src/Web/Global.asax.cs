@@ -43,15 +43,24 @@ public class MvcApplication : DependencyInjectionHttpApplication
         services.AddInfrastructure();
     }
 
+    protected override void ConfigureFilters(GlobalFilterCollection filters)
+    {
+        filters.Add(new HandleErrorAttribute());
+        filters.Add(new JsonNetResultOverrideAttribute());
+    }
+
     protected override void ConfigureRoutes(RouteCollection routes)
     {
         routes.LowercaseUrls = true;
+        routes.AppendTrailingSlash = true;
         routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+        routes.MapMvcAttributeRoutes();
+
         routes.MapRoute(
-            "Home",
-            "{action}/{id}",
-            new
+            name: "Home",
+            url: "{action}/{id}",
+            defaults: new
             {
                 controller = "Home",
                 action = "Index",
@@ -69,12 +78,6 @@ public class MvcApplication : DependencyInjectionHttpApplication
                 id = UrlParameter.Optional,
             }
         );
-    }
-
-    protected override void ConfigureFilters(GlobalFilterCollection filters)
-    {
-        filters.Add(new HandleErrorAttribute());
-        filters.Add(new JsonNetResultOverrideAttribute());
     }
 
     protected override void ConfigureBundles(BundleCollection bundles)

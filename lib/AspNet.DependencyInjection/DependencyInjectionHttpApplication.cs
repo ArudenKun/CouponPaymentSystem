@@ -3,37 +3,34 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Autofac.Integration.Mvc;
+using AspNet.DependencyInjection;
+using AspNet.DependencyInjection.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
+
+[assembly: PreApplicationStartMethod(
+    typeof(DependencyInjectionHttpApplication),
+    nameof(DependencyInjectionHttpApplication.InitModule)
+)]
 
 namespace AspNet.DependencyInjection;
 
 public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
-    private static IContainer? _container;
-    private static AutofacServiceProvider? _serviceProvider;
+    private static ServiceProvider? _serviceProvider;
+
+    public static void InitModule() => RegisterModule(typeof(ScopedMvcHttpModule));
 
     protected abstract Assembly Assembly { get; }
 
     // ReSharper disable once UnusedMember.Global
     public void Configuration(IAppBuilder app)
     {
-        BuildServices();
+        BuildServiceProvider();
 
-        Guard.NotNull(_container);
         Guard.NotNull(_serviceProvider);
-
-        // Owin
-        app.UseAutofacMiddleware(_container);
-
-        // Owin MVC
-        app.UseAutofacMvc();
-
-        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
-
+        app.Use<ScopedMvcDependencyMiddleware>(_serviceProvider);
+        DependencyResolver.SetResolver(new ScopedMvcDependencyResolver(_serviceProvider));
         Configure(app, _serviceProvider);
     }
 
@@ -60,35 +57,22 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
     protected void Application_End()
     {
         OnApplicationEnd();
-        _container?.Dispose();
         _serviceProvider?.Dispose();
-        _container = null;
         _serviceProvider = null;
     }
 
     protected virtual void OnApplicationEnd() { }
 
-    private void BuildServices()
+    private void BuildServiceProvider()
     {
-        if (_container is not null && _serviceProvider is not null)
+        if (_serviceProvider is not null)
         {
             return;
         }
 
-        var containerBuilder = new ContainerBuilder();
-
-        // MVC
-        containerBuilder.RegisterControllers(Assembly).InstancePerRequest();
-        containerBuilder.RegisterModelBinders(Assembly).InstancePerRequest();
-        containerBuilder.RegisterModelBinderProvider();
-        containerBuilder.RegisterModule<AutofacWebTypesModule>();
-        containerBuilder.RegisterSource(new ViewRegistrationSource());
-        containerBuilder.RegisterFilterProvider();
-
         var services = new ServiceCollection();
+        services.AddMvc(Assembly);
         ConfigureServices(services);
-        containerBuilder.Populate(services);
-        _container = containerBuilder.Build();
-        _serviceProvider = new AutofacServiceProvider(_container);
+        _serviceProvider = services.BuildServiceProvider(true);
     }
 }
