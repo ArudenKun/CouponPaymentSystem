@@ -1,16 +1,22 @@
 ﻿using System.Web.Mvc;
+using Application.Common.Interfaces;
 
 namespace Web.Controllers;
 
 public class HomeController : Controller
 {
-    [Route("")]
+    private readonly IAppDbContext _appDbContext;
+
+    public HomeController(IAppDbContext appDbContext)
+    {
+        _appDbContext = appDbContext;
+    }
+
     public ActionResult Index()
     {
         return View();
     }
 
-    [Authorize]
     public ActionResult Upload()
     {
         ViewBag.Message = "Your application description page.";
