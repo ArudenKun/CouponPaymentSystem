@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AspNet.DependencyInjection.Internals.Mvc;
+namespace AspNet.DependencyInjection.Internals;
 
 internal class ScopedMvcDependencyResolver : IDependencyResolver
 {

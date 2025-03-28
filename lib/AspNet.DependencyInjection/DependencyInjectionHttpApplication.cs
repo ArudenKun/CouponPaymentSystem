@@ -1,9 +1,10 @@
-﻿using System.Web;
-using System.Web.Http;
+﻿using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
 using AspNet.DependencyInjection;
-using AspNet.DependencyInjection.Internals.Mvc;
-using AspNet.DependencyInjection.Internals.WebApi;
+using AspNet.DependencyInjection.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
 
@@ -20,6 +21,8 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
     public static void InitModule() => RegisterModule(typeof(ScopedMvcHttpModule));
 
+    protected abstract Assembly Assembly { get; }
+
     // ReSharper disable once UnusedMember.Global
     public void Configuration(IAppBuilder app)
     {
@@ -28,10 +31,6 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         Guard.NotNull(_serviceProvider);
         app.Use<ScopedMvcDependencyMiddleware>(_serviceProvider);
         DependencyResolver.SetResolver(new ScopedMvcDependencyResolver(_serviceProvider));
-        GlobalConfiguration.Configure(configuration =>
-            configuration.DependencyResolver = new ScopedHttpDependencyResolver(_serviceProvider)
-        );
-
         Configure(app, _serviceProvider);
     }
 
@@ -39,7 +38,19 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
     protected abstract void ConfigureServices(IServiceCollection services);
 
-    protected void Application_Start() => OnApplicationStart();
+    protected virtual void ConfigureRoutes(RouteCollection routes) { }
+
+    protected virtual void ConfigureFilters(GlobalFilterCollection filters) { }
+
+    protected virtual void ConfigureBundles(BundleCollection bundles) { }
+
+    protected void Application_Start()
+    {
+        ConfigureRoutes(RouteTable.Routes);
+        ConfigureFilters(GlobalFilters.Filters);
+        ConfigureBundles(BundleTable.Bundles);
+        OnApplicationStart();
+    }
 
     protected virtual void OnApplicationStart() { }
 
@@ -60,6 +71,7 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         }
 
         var services = new ServiceCollection();
+        services.AddMvc(Assembly);
         ConfigureServices(services);
         _serviceProvider = services.BuildServiceProvider(true);
     }

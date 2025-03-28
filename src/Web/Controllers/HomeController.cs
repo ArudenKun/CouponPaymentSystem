@@ -4,11 +4,13 @@ namespace Web.Controllers;
 
 public class HomeController : Controller
 {
+    [Route("")]
     public ActionResult Index()
     {
         return View();
     }
 
+    [Authorize]
     public ActionResult Upload()
     {
         ViewBag.Message = "Your application description page.";

@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
-using AspNet.DependencyInjection.Internals.Mvc;
+using AspNet.DependencyInjection.Internals;
 
-namespace AspNet.DependencyInjection.Mvc;
+namespace AspNet.DependencyInjection;
 
 [AttributeUsage(
     AttributeTargets.Class

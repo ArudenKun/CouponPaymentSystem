@@ -1,4 +1,4 @@
-﻿using AspNet.DependencyInjection.Internals.Mvc;
+﻿using AspNet.DependencyInjection.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin;
 

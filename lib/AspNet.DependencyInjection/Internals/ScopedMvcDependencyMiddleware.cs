@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin;
 
-namespace AspNet.DependencyInjection.Internals.Mvc;
+namespace AspNet.DependencyInjection.Internals;
 
 internal class ScopedMvcDependencyMiddleware : OwinMiddleware
 {

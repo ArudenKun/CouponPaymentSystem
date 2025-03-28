@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AspNet.DependencyInjection.Internals.Mvc;
+namespace AspNet.DependencyInjection.Internals;
 
 internal sealed class ScopedMvcHttpModule : IHttpModule
 {

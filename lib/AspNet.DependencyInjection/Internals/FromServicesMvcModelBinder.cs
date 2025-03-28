@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace AspNet.DependencyInjection.Internals.Mvc;
+namespace AspNet.DependencyInjection.Internals;
 
 internal sealed class FromServicesMvcModelBinder : IModelBinder
 {

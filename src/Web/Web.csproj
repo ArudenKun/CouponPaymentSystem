@@ -32,7 +32,4 @@
       <ProjectReference Include="..\..\lib\AspNet.DependencyInjection\AspNet.DependencyInjection.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
-    <ItemGroup>
-      <Folder Include="ApiControllers\Common\" />
-    </ItemGroup>
 </Project>
