@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Web;
-using System.Web.Http;
 using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Integration.Mvc;
-using Autofac.Integration.WebApi;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
 
@@ -15,8 +15,6 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
     private static IContainer? _container;
     private static AutofacServiceProvider? _serviceProvider;
-
-    private static HttpConfiguration HttpConfiguration => GlobalConfiguration.Configuration;
 
     protected abstract Assembly Assembly { get; }
 
@@ -34,9 +32,7 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         // Owin MVC
         app.UseAutofacMvc();
 
-        // Owin Web Api
-        app.UseAutofacWebApi(HttpConfiguration);
-        app.UseWebApi(HttpConfiguration);
+        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
 
         Configure(app, _serviceProvider);
     }
@@ -45,7 +41,19 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
     protected abstract void ConfigureServices(IServiceCollection services);
 
-    protected void Application_Start() => OnApplicationStart();
+    protected virtual void ConfigureRoutes(RouteCollection routes) { }
+
+    protected virtual void ConfigureFilters(GlobalFilterCollection filters) { }
+
+    protected virtual void ConfigureBundles(BundleCollection bundles) { }
+
+    protected void Application_Start()
+    {
+        ConfigureRoutes(RouteTable.Routes);
+        ConfigureFilters(GlobalFilters.Filters);
+        ConfigureBundles(BundleTable.Bundles);
+        OnApplicationStart();
+    }
 
     protected virtual void OnApplicationStart() { }
 
@@ -62,7 +70,7 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
     private void BuildServices()
     {
-        if (_container is not null)
+        if (_container is not null && _serviceProvider is not null)
         {
             return;
         }
@@ -77,18 +85,10 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         containerBuilder.RegisterSource(new ViewRegistrationSource());
         containerBuilder.RegisterFilterProvider();
 
-        // Web Api
-        containerBuilder.RegisterApiControllers(Assembly).InstancePerRequest();
-        containerBuilder.RegisterWebApiFilterProvider(HttpConfiguration);
-        containerBuilder.RegisterWebApiModelBinderProvider();
-
         var services = new ServiceCollection();
         ConfigureServices(services);
         containerBuilder.Populate(services);
         _container = containerBuilder.Build();
         _serviceProvider = new AutofacServiceProvider(_container);
-
-        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
-        HttpConfiguration.DependencyResolver = new AutofacWebApiDependencyResolver(_container);
     }
 }

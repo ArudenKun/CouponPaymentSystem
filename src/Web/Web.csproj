@@ -4,6 +4,7 @@
         <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
         <MicrosoftNetCompilersToolset_Version>4.13.0</MicrosoftNetCompilersToolset_Version>
         <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
+        <NoWarn>$(NoWarn);NU1608</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,8 +32,5 @@
     <ItemGroup>
       <ProjectReference Include="..\..\lib\AspNet.DependencyInjection\AspNet.DependencyInjection.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="ApiControllers\Common\" />
     </ItemGroup>
 </Project>
