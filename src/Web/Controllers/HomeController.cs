@@ -17,6 +17,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [Authorize]
     public ActionResult Upload()
     {
         ViewBag.Message = "Your application description page.";
