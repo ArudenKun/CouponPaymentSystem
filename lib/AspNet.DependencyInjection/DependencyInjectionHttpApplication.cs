@@ -1,36 +1,42 @@
-﻿using System.Web;
+﻿using System.Reflection;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
-using AspNet.DependencyInjection;
-using AspNet.DependencyInjection.Internals.Mvc;
-using AspNet.DependencyInjection.Internals.WebApi;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Integration.Mvc;
+using Autofac.Integration.WebApi;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
-
-[assembly: PreApplicationStartMethod(
-    typeof(DependencyInjectionHttpApplication),
-    nameof(DependencyInjectionHttpApplication.InitModule)
-)]
 
 namespace AspNet.DependencyInjection;
 
 public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
-    private static ServiceProvider? _serviceProvider;
+    private static IContainer? _container;
+    private static AutofacServiceProvider? _serviceProvider;
 
-    public static void InitModule() => RegisterModule(typeof(ScopedMvcHttpModule));
+    private static HttpConfiguration HttpConfiguration => GlobalConfiguration.Configuration;
+
+    protected abstract Assembly Assembly { get; }
 
     // ReSharper disable once UnusedMember.Global
     public void Configuration(IAppBuilder app)
     {
-        BuildServiceProvider();
+        BuildServices();
 
+        Guard.NotNull(_container);
         Guard.NotNull(_serviceProvider);
-        app.Use<ScopedMvcDependencyMiddleware>(_serviceProvider);
-        DependencyResolver.SetResolver(new ScopedMvcDependencyResolver(_serviceProvider));
-        GlobalConfiguration.Configure(configuration =>
-            configuration.DependencyResolver = new ScopedHttpDependencyResolver(_serviceProvider)
-        );
+
+        // Owin
+        app.UseAutofacMiddleware(_container);
+
+        // Owin MVC
+        app.UseAutofacMvc();
+
+        // Owin Web Api
+        app.UseAutofacWebApi(HttpConfiguration);
+        app.UseWebApi(HttpConfiguration);
 
         Configure(app, _serviceProvider);
     }
@@ -46,21 +52,43 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
     protected void Application_End()
     {
         OnApplicationEnd();
+        _container?.Dispose();
         _serviceProvider?.Dispose();
+        _container = null;
         _serviceProvider = null;
     }
 
     protected virtual void OnApplicationEnd() { }
 
-    private void BuildServiceProvider()
+    private void BuildServices()
     {
-        if (_serviceProvider is not null)
+        if (_container is not null)
         {
             return;
         }
 
+        var containerBuilder = new ContainerBuilder();
+
+        // MVC
+        containerBuilder.RegisterControllers(Assembly).InstancePerRequest();
+        containerBuilder.RegisterModelBinders(Assembly).InstancePerRequest();
+        containerBuilder.RegisterModelBinderProvider();
+        containerBuilder.RegisterModule<AutofacWebTypesModule>();
+        containerBuilder.RegisterSource(new ViewRegistrationSource());
+        containerBuilder.RegisterFilterProvider();
+
+        // Web Api
+        containerBuilder.RegisterApiControllers(Assembly).InstancePerRequest();
+        containerBuilder.RegisterWebApiFilterProvider(HttpConfiguration);
+        containerBuilder.RegisterWebApiModelBinderProvider();
+
         var services = new ServiceCollection();
         ConfigureServices(services);
-        _serviceProvider = services.BuildServiceProvider(true);
+        containerBuilder.Populate(services);
+        _container = containerBuilder.Build();
+        _serviceProvider = new AutofacServiceProvider(_container);
+
+        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
+        HttpConfiguration.DependencyResolver = new AutofacWebApiDependencyResolver(_container);
     }
 }

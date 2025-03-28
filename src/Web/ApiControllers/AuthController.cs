@@ -5,7 +5,6 @@ namespace Web.ApiControllers;
 
 public class AuthController : ApiController
 {
-    [ApiHttpGet]
     public IHttpActionResult Login(
         [QueryString] string username = "UNKNOWN",
         [QueryString] string password = "UNKNOWN"

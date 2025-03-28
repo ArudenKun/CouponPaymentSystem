@@ -1,4 +1,6 @@
-﻿using Application.Common.Interfaces;
+﻿using System.Data;
+using System.Data.SQLite;
+using Application.Common.Interfaces;
 using Dapper;
 using Domain;
 using Infrastructure.Data;
@@ -13,8 +15,9 @@ public static class DependencyInjection
     {
         QuestPDF.Settings.License = LicenseType.Enterprise;
 
-        services.AddSingleton<IAppReadDbContext, AppReadDbContext>();
-        services.AddSingleton<IAppDbContext, AppDbContext>();
+        services.AddTransient<IAppReadDbContext, AppReadDbContext>();
+        services.AddTransient<IAppDbContext, AppDbContext>();
+        services.AddTransient<IDbConnection>(_ => new SQLiteConnection("Data Source=:memory"));
 
         services.AddDapper();
 
