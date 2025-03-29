@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Application.Common.Interfaces;
+namespace Application.Common.Interfaces.Data;
 
 public interface IAppReadDbContext : IDisposable
 {

@@ -36,4 +36,9 @@ public class HomeController : Controller
             JsonRequestBehavior.AllowGet
         );
     }
+
+    public ActionResult Login()
+    {
+        return View();
+    }
 }

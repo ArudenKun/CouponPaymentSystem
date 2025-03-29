@@ -1,21 +1,21 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Ardalis.GuardClauses;
+using Newtonsoft.Json;
 using Riok.Mapperly.Abstractions;
 
 namespace Web.Controllers.Common;
 
-public class SystemTextJsonResult : JsonResult
+public class JsonNetResult : JsonResult
 {
-    private static readonly JsonSerializerOptions DefaultSerializerOptions = new()
+    private static readonly JsonSerializerSettings DefaultSerializerSettings = new()
     {
-        WriteIndented = true,
-        ReferenceHandler = ReferenceHandler.IgnoreCycles,
+        Formatting = Formatting.Indented,
+        NullValueHandling = NullValueHandling.Ignore,
     };
 
     public override void ExecuteResult(ControllerContext context)
     {
-        Guard.NotNull(context);
+        Guard.Against.Null(context);
 
         if (
             JsonRequestBehavior is JsonRequestBehavior.DenyGet
@@ -42,12 +42,13 @@ public class SystemTextJsonResult : JsonResult
         if (Data is null)
             return;
 
-        JsonSerializer.Serialize(response.OutputStream, Data, DefaultSerializerOptions);
+        var jsonSerializer = JsonSerializer.Create(DefaultSerializerSettings);
+        jsonSerializer.Serialize(response.Output, Data);
     }
 }
 
 [Mapper]
 public static partial class JsonNetResultMapper
 {
-    public static partial SystemTextJsonResult ToSystemTextJsonResult(this JsonResult jsonResult);
+    public static partial JsonNetResult ToJsonNetResult(this JsonResult jsonResult);
 }

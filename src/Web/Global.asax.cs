@@ -1,9 +1,13 @@
+using System.ComponentModel;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Application;
 using AspNet.DependencyInjection;
 using BundleTransformer.Core.Bundles;
+using Domain.Entities;
+using Domain.ValueObjects;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin;
@@ -22,31 +26,37 @@ public class MvcApplication : DependencyInjectionHttpApplication
 {
     protected override Assembly Assembly => typeof(MvcApplication).Assembly;
 
+    protected override void OnApplicationStart()
+    {
+        base.OnApplicationStart();
+    }
+
     protected override void Configure(IAppBuilder app, IServiceProvider serviceProvider)
     {
         app.UseCookieAuthentication(
             new CookieAuthenticationOptions
             {
                 AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
-                LoginPath = new PathString("/auth/login"),
+                LoginPath = new PathString("/login"),
                 CookieName = CookieAuthenticationDefaults.CookiePrefix + "CouponPaymentSystem.",
-                ExpireTimeSpan = TimeSpan.FromMinutes(30),
+                ExpireTimeSpan = TimeSpan.FromMinutes(15),
+                SlidingExpiration = false,
                 ReturnUrlParameter = "returnUrl",
+                CookieHttpOnly = true,
                 CookieSecure = CookieSecureOption.SameAsRequest,
-                SlidingExpiration = true,
             }
         );
     }
 
     protected override void ConfigureServices(IServiceCollection services)
     {
-        services.AddInfrastructure();
+        services.AddApplication().AddInfrastructure().AddWeb();
     }
 
     protected override void ConfigureFilters(GlobalFilterCollection filters)
     {
         filters.Add(new HandleErrorAttribute());
-        filters.Add(new SystemTextJsonResultOverrideAttribute());
+        filters.Add(new JsonNetResultOverrideAttribute());
     }
 
     protected override void ConfigureRoutes(RouteCollection routes)

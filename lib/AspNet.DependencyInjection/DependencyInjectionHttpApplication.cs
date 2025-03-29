@@ -14,9 +14,9 @@ namespace AspNet.DependencyInjection;
 
 public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
-    private IContainer? _container;
+    private static IContainer? _container;
 
-    protected abstract Assembly Assembly { get; }
+    protected virtual Assembly? Assembly => null;
 
     // ReSharper disable once UnusedMember.Global
     public void Configuration(IAppBuilder app)
@@ -32,16 +32,16 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
     protected abstract void ConfigureServices(IServiceCollection services);
 
-    protected virtual void ConfigureRoutes(RouteCollection routes) { }
-
     protected virtual void ConfigureFilters(GlobalFilterCollection filters) { }
+
+    protected virtual void ConfigureRoutes(RouteCollection routes) { }
 
     protected virtual void ConfigureBundles(BundleCollection bundles) { }
 
     protected void Application_Start()
     {
-        ConfigureRoutes(RouteTable.Routes);
         ConfigureFilters(GlobalFilters.Filters);
+        ConfigureRoutes(RouteTable.Routes);
         ConfigureBundles(BundleTable.Bundles);
         OnApplicationStart();
     }
@@ -68,6 +68,6 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         var services = new ServiceCollection();
         ConfigureServices(services);
         _container = container.WithDependencyInjectionAdapter(services);
-        _container.WithMvc();
+        _container = _container.WithMvc([Assembly]);
     }
 }

@@ -6,20 +6,29 @@ using Microsoft.Owin.Security.Cookies;
 
 namespace Web.Controllers;
 
-[RoutePrefix("auth")]
+// [RoutePrefix("auth")]
 public class AuthController : Controller
 {
     private IAuthenticationManager AuthenticationManager =>
         HttpContext.GetOwinContext().Authentication;
 
-    [Route("login")]
+    // [Route("login")]
     public ActionResult Login(string returnUrl = "")
     {
-        var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationType);
-        identity.AddClaim(new Claim(ClaimTypes.Name, "Test"));
-        identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()));
-        identity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-        AuthenticationManager.SignIn(identity);
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, "Test"),
+            new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Role, "Admin"),
+        };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationType);
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true,
+            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1),
+        };
+        AuthenticationManager.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+        AuthenticationManager.SignIn(authProperties, identity);
         return RedirectToLocal(returnUrl);
     }
 

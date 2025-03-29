@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using Application;
+using Application.Common;
 
 namespace Web.Controllers.Common;
 
@@ -29,5 +30,22 @@ public abstract class AppControllerBase : Controller
     protected ActionResult JsonGet(object data)
     {
         return Json(data, JsonRequestBehavior.AllowGet);
+    }
+
+    protected override void OnActionExecuting(ActionExecutingContext filterContext)
+    {
+        // var authTicket = ((ClaimsIdentity)User.Identity)?.BootstrapContext as ClaimsIdentity;
+        // if (authTicket?.FindFirst("Expires")?.Value != null)
+        // {
+        //     var expires = DateTime.Parse(authTicket.FindFirst("Expires").Value);
+        //     if (DateTime.UtcNow > expires)
+        //     {
+        //         HttpContext
+        //             .GetOwinContext()
+        //             .Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+        //         filterContext.Result = RedirectToAction("Login", "Account");
+        //     }
+        // }
+        base.OnActionExecuting(filterContext);
     }
 }

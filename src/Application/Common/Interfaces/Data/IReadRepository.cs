@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using Domain.Common.Entities;
 using Domain.Common.Enums;
 
-namespace Application.Common.Interfaces;
+namespace Application.Common.Interfaces.Data;
 
 public interface IReadRepository<in TId, TEntity>
     where TId : notnull

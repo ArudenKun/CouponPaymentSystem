@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Domain.Common.Entities;
 
-namespace Application.Common.Interfaces;
+namespace Application.Common.Interfaces.Data;
 
 public interface IRepository<in TId, TEntity> : IReadRepository<TId, TEntity>
     where TId : notnull

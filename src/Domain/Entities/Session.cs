@@ -1,9 +1,7 @@
 ﻿using Domain.Common.Entities;
-using Vogen;
 
 namespace Domain.Entities;
 
-[ValueObject<int>]
 public readonly partial struct SessionId;
 
 public class Session : IEntity<SessionId>

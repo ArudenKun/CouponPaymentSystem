@@ -1,11 +1,10 @@
 ﻿using System.Data;
-using System.Data.SQLite;
-using Application.Common.Interfaces;
+using System.Data.SqlClient;
 using Dapper;
 using Domain;
-using Infrastructure.Data;
 using Microsoft.Extensions.DependencyInjection;
 using QuestPDF.Infrastructure;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Infrastructure;
 
@@ -15,16 +14,17 @@ public static class DependencyInjection
     {
         QuestPDF.Settings.License = LicenseType.Enterprise;
 
-        services.AddTransient<IAppReadDbContext, AppReadDbContext>();
-        services.AddTransient<IAppDbContext, AppDbContext>();
-        services.AddTransient<IDbConnection>(_ => new SQLiteConnection("Data Source=:memory"));
+#pragma warning disable CS0618 // Type or member is obsolete
+        services.AddTransient<IDbConnection>(_ => new SqlConnection("Data Source=:memory"));
+#pragma warning restore CS0618 // Type or member is obsolete
 
-        services.AddDapper();
+        services.AddDapperInternal();
+        services.AddFusionCacheInternal();
 
         return services;
     }
 
-    private static void AddDapper(this IServiceCollection _)
+    private static void AddDapperInternal(this IServiceCollection _)
     {
         var handlers = typeof(IDomain)
             .Assembly.GetExportedTypes()
@@ -44,12 +44,20 @@ public static class DependencyInjection
         }
     }
 
-    // [GenerateServiceRegistrations(
-    //     FromAssemblyOf = typeof(IDomain),
-    //     Lifetime = ServiceLifetime.Transient,
-    //     AsImplementedInterfaces = true,
-    //     AssignableTo = typeof(SqlMapper.ITypeHandler),
-    //     TypeNameFilter = "*DapperTypeHandler"
-    // )]
-    // private static partial void AddDapperTypeHandlers(this IServiceCollection services);
+    private static void AddFusionCacheInternal(this IServiceCollection services)
+    {
+        services
+            .AddFusionCache()
+            .WithDefaultEntryOptions(
+                new FusionCacheEntryOptions
+                {
+                    // CACHE DURATION
+                    Duration = TimeSpan.FromMinutes(15),
+                    // FACTORY TIMEOUTS
+                    FactorySoftTimeout = TimeSpan.FromSeconds(10),
+                    FactoryHardTimeout = TimeSpan.FromSeconds(30),
+                    // AllowTimedOutFactoryBackgroundCompletion = true,
+                }
+            );
+    }
 }
