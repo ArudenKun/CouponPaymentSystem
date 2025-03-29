@@ -52,7 +52,6 @@ public class MvcApplication : DependencyInjectionHttpApplication
     protected override void ConfigureRoutes(RouteCollection routes)
     {
         routes.LowercaseUrls = true;
-        routes.AppendTrailingSlash = true;
         routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
         routes.MapMvcAttributeRoutes();

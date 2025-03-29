@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.ValueObjects;
+using Riok.Mapperly.Abstractions;
 
 namespace Application.Features.Transactions;
 

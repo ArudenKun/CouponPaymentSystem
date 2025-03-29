@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Security.Principal;
+using System.Text.Json;
 using Domain;
 using Domain.Entities;
-using Newtonsoft.Json;
 
 namespace Application;
 
@@ -14,7 +14,7 @@ public class AppPrincipal : DomainPrincipal
         : base(principal)
     {
         _user =
-            JsonConvert.DeserializeObject<User>(GetClaimValue<string>(ClaimTypes.UserData) ?? "")
+            JsonSerializer.Deserialize<User?>(GetClaimValue<string>(ClaimTypes.UserData) ?? "")
             ?? User.Empty;
     }
 

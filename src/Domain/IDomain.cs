@@ -1,9 +1,7 @@
 ﻿using Vogen;
 
 [assembly: VogenDefaults(
-    conversions: Conversions.TypeConverter
-        | Conversions.NewtonsoftJson
-        | Conversions.DapperTypeHandler,
+    conversions: Conversions.Default | Conversions.DapperTypeHandler,
     toPrimitiveCasting: CastOperator.Implicit
 )]
 

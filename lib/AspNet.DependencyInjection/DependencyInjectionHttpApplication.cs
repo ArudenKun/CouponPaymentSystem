@@ -3,23 +3,18 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using AspNet.DependencyInjection;
-using AspNet.DependencyInjection.Internals;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Integration.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
-
-[assembly: PreApplicationStartMethod(
-    typeof(DependencyInjectionHttpApplication),
-    nameof(DependencyInjectionHttpApplication.InitModule)
-)]
 
 namespace AspNet.DependencyInjection;
 
 public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
-    private static ServiceProvider? _serviceProvider;
-
-    public static void InitModule() => RegisterModule(typeof(ScopedMvcHttpModule));
+    private static IContainer? _container;
+    private static AutofacServiceProvider? _serviceProvider;
 
     protected abstract Assembly Assembly { get; }
 
@@ -27,10 +22,15 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
     public void Configuration(IAppBuilder app)
     {
         BuildServiceProvider();
-
+        Guard.NotNull(_container);
         Guard.NotNull(_serviceProvider);
-        app.Use<ScopedMvcDependencyMiddleware>(_serviceProvider);
-        DependencyResolver.SetResolver(new ScopedMvcDependencyResolver(_serviceProvider));
+
+        app.UseAutofacMiddleware(_container);
+        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
+
+        app.UseAutofacMiddleware(_container);
+        app.UseAutofacMvc();
+
         Configure(app, _serviceProvider);
     }
 
@@ -57,7 +57,9 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
     protected void Application_End()
     {
         OnApplicationEnd();
+        _container?.Dispose();
         _serviceProvider?.Dispose();
+        _container = null;
         _serviceProvider = null;
     }
 
@@ -65,14 +67,24 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
     private void BuildServiceProvider()
     {
-        if (_serviceProvider is not null)
+        if (_container is not null)
         {
             return;
         }
 
+        var builder = new ContainerBuilder();
+
+        builder.RegisterControllers(Assembly);
+        builder.RegisterModelBinders(Assembly);
+        builder.RegisterModelBinderProvider();
+        builder.RegisterModule<AutofacWebTypesModule>();
+        builder.RegisterSource(new ViewRegistrationSource());
+        builder.RegisterFilterProvider();
+
         var services = new ServiceCollection();
-        services.AddMvc(Assembly);
         ConfigureServices(services);
-        _serviceProvider = services.BuildServiceProvider(true);
+        builder.Populate(services);
+        _container = builder.Build();
+        _serviceProvider = new AutofacServiceProvider(_container);
     }
 }
