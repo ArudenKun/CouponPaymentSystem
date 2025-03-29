@@ -2,13 +2,13 @@
 
 namespace Web.Controllers.Common;
 
-public sealed class JsonNetResultOverrideAttribute : ActionFilterAttribute
+public sealed class SystemTextJsonResultOverrideAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuted(ActionExecutedContext filterContext)
     {
         if (filterContext.Result is JsonResult jsonResult)
         {
-            filterContext.Result = jsonResult.ToJsonNetResult();
+            filterContext.Result = jsonResult.ToSystemTextJsonResult();
         }
 
         base.OnActionExecuted(filterContext);

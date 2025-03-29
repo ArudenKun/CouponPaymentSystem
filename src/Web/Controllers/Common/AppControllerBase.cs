@@ -25,4 +25,9 @@ public abstract class AppControllerBase : Controller
 
         return Redirect(referrer.ToString());
     }
+
+    protected ActionResult JsonGet(object data)
+    {
+        return Json(data, JsonRequestBehavior.AllowGet);
+    }
 }

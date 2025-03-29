@@ -3,9 +3,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Autofac.Integration.Mvc;
+using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
+using DryIoc.Mvc;
+using DryIoc.Owin;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
 
@@ -13,8 +14,7 @@ namespace AspNet.DependencyInjection;
 
 public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
-    private static IContainer? _container;
-    private static AutofacServiceProvider? _serviceProvider;
+    private IContainer? _container;
 
     protected abstract Assembly Assembly { get; }
 
@@ -23,15 +23,9 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
     {
         BuildServiceProvider();
         Guard.NotNull(_container);
-        Guard.NotNull(_serviceProvider);
 
-        app.UseAutofacMiddleware(_container);
-        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
-
-        app.UseAutofacMiddleware(_container);
-        app.UseAutofacMvc();
-
-        Configure(app, _serviceProvider);
+        app.UseDryIocOwinMiddleware(_container);
+        Configure(app, _container);
     }
 
     protected abstract void Configure(IAppBuilder app, IServiceProvider serviceProvider);
@@ -58,9 +52,7 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
     {
         OnApplicationEnd();
         _container?.Dispose();
-        _serviceProvider?.Dispose();
         _container = null;
-        _serviceProvider = null;
     }
 
     protected virtual void OnApplicationEnd() { }
@@ -72,19 +64,10 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
             return;
         }
 
-        var builder = new ContainerBuilder();
-
-        builder.RegisterControllers(Assembly);
-        builder.RegisterModelBinders(Assembly);
-        builder.RegisterModelBinderProvider();
-        builder.RegisterModule<AutofacWebTypesModule>();
-        builder.RegisterSource(new ViewRegistrationSource());
-        builder.RegisterFilterProvider();
-
+        var container = new Container();
         var services = new ServiceCollection();
         ConfigureServices(services);
-        builder.Populate(services);
-        _container = builder.Build();
-        _serviceProvider = new AutofacServiceProvider(_container);
+        _container = container.WithDependencyInjectionAdapter(services);
+        _container.WithMvc();
     }
 }

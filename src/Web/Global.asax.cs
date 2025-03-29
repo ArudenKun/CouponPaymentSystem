@@ -46,7 +46,7 @@ public class MvcApplication : DependencyInjectionHttpApplication
     protected override void ConfigureFilters(GlobalFilterCollection filters)
     {
         filters.Add(new HandleErrorAttribute());
-        filters.Add(new JsonNetResultOverrideAttribute());
+        filters.Add(new SystemTextJsonResultOverrideAttribute());
     }
 
     protected override void ConfigureRoutes(RouteCollection routes)

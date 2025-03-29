@@ -1,15 +1,16 @@
-﻿using System.Web.Mvc;
-using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Web.Mvc;
 using Riok.Mapperly.Abstractions;
 
 namespace Web.Controllers.Common;
 
-public class JsonNetResult : JsonResult
+public class SystemTextJsonResult : JsonResult
 {
-    private static readonly JsonSerializerSettings DefaultSerializerSettings = new()
+    private static readonly JsonSerializerOptions DefaultSerializerOptions = new()
     {
-        Formatting = Formatting.Indented,
-        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+        WriteIndented = true,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles,
     };
 
     public override void ExecuteResult(ControllerContext context)
@@ -41,13 +42,12 @@ public class JsonNetResult : JsonResult
         if (Data is null)
             return;
 
-        var serializer = JsonSerializer.Create(DefaultSerializerSettings);
-        serializer.Serialize(response.Output, Data);
+        JsonSerializer.Serialize(response.OutputStream, Data, DefaultSerializerOptions);
     }
 }
 
 [Mapper]
 public static partial class JsonNetResultMapper
 {
-    public static partial JsonNetResult ToJsonNetResult(this JsonResult jsonResult);
+    public static partial SystemTextJsonResult ToSystemTextJsonResult(this JsonResult jsonResult);
 }

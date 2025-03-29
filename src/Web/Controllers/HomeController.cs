@@ -4,7 +4,6 @@ namespace Web.Controllers;
 
 public class HomeController : Controller
 {
-    [Route("")]
     public ActionResult Index()
     {
         return View();
@@ -23,5 +22,18 @@ public class HomeController : Controller
         ViewBag.Message = "Your contact page.";
 
         return View();
+    }
+
+    public ActionResult TestJson()
+    {
+        return Json(
+            new
+            {
+                Message = "Hello World!",
+                Text = "Test",
+                Yeet = "ASDASDAS",
+            },
+            JsonRequestBehavior.AllowGet
+        );
     }
 }
