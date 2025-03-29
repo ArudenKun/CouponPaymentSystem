@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using AspNet.DependencyInjection;
+using Autofac;
 using BundleTransformer.Core.Bundles;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,11 @@ public class MvcApplication : DependencyInjectionHttpApplication
 {
     protected override Assembly Assembly => typeof(MvcApplication).Assembly;
 
-    protected override void Configure(IAppBuilder app, IServiceProvider serviceProvider)
+    protected override void Configure(
+        IAppBuilder app,
+        IComponentContext container,
+        IServiceProvider serviceProvider
+    )
     {
         app.UseCookieAuthentication(
             new CookieAuthenticationOptions
@@ -38,7 +43,10 @@ public class MvcApplication : DependencyInjectionHttpApplication
         );
     }
 
-    protected override void ConfigureServices(IServiceCollection services)
+    protected override void ConfigureServices(
+        ContainerBuilder containerBuilder,
+        IServiceCollection services
+    )
     {
         services.AddInfrastructure();
     }
@@ -47,6 +55,8 @@ public class MvcApplication : DependencyInjectionHttpApplication
     {
         routes.LowercaseUrls = true;
         routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+        routes.MapMvcAttributeRoutes();
 
         routes.MapRoute(
             "Home",

@@ -34,12 +34,19 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 
         DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
 
-        Configure(app, _serviceProvider);
+        Configure(app, _container, _serviceProvider);
     }
 
-    protected abstract void Configure(IAppBuilder app, IServiceProvider serviceProvider);
+    protected abstract void Configure(
+        IAppBuilder app,
+        IComponentContext container,
+        IServiceProvider serviceProvider
+    );
 
-    protected abstract void ConfigureServices(IServiceCollection services);
+    protected abstract void ConfigureServices(
+        ContainerBuilder containerBuilder,
+        IServiceCollection services
+    );
 
     protected virtual void ConfigureRoutes(RouteCollection routes) { }
 
@@ -86,7 +93,7 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         containerBuilder.RegisterFilterProvider();
 
         var services = new ServiceCollection();
-        ConfigureServices(services);
+        ConfigureServices(containerBuilder, services);
         containerBuilder.Populate(services);
         _container = containerBuilder.Build();
         _serviceProvider = new AutofacServiceProvider(_container);
