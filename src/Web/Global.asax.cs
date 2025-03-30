@@ -3,7 +3,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Application;
-using Application.Common.Validation;
+using Application.Common.Validators;
 using AspNet.DependencyInjection;
 using BundleTransformer.Core.Bundles;
 using FluentValidation.Mvc;
@@ -27,6 +27,7 @@ public class MvcApplication : DependencyInjectionHttpApplication
 
     protected override void Configure(IAppBuilder app, IServiceProvider serviceProvider)
     {
+        DataTables.AspNet.Mvc5.Configuration.RegisterDataTables();
         FluentValidationModelValidatorProvider.Configure(provider =>
             provider.ValidatorFactory = serviceProvider.GetRequiredService<ValidatorFactory>()
         );

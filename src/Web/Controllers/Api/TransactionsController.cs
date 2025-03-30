@@ -1,7 +1,11 @@
-﻿using System.Web.Mvc;
+﻿using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using Application.Features.Transactions.Commands;
 using Application.Features.Transactions.Queries;
 using Application.Features.Users;
-using Domain.Entities;
+using DataTables.AspNet.Core;
+using DataTables.AspNet.Mvc5;
 using MediatR;
 using Web.Controllers.Common;
 
@@ -18,6 +22,21 @@ public class TransactionsController : AppControllerBase
     }
 
     [HttpGet]
+    [Route("table")]
+    public async Task<ActionResult> Table(IDataTablesRequest request)
+    {
+        var response = await _mediator.Send(new GetTransactionsDataTableQuery(request));
+        var dtResponse = DataTablesResponse.Create(
+            request,
+            (int)response.Value.RecordsTotal,
+            (int)response.Value.RecordsFiltered,
+            response.Value.Data
+        );
+
+        return new DataTablesJsonResult(dtResponse, JsonRequestBehavior.AllowGet);
+    }
+
+    [HttpGet]
     [Route]
     public ActionResult GetAll()
     {
@@ -28,15 +47,23 @@ public class TransactionsController : AppControllerBase
     [Route("{id}")]
     public async Task<ActionResult> Get(string id)
     {
-        var response = await _mediator.Send(new GetTransactionQuery(id));
-        return response.Match(JsonGet, JsonGet);
+        await Task.CompletedTask;
+        return JsonGet(id);
+        // var response = await _mediator.Send(new GetTransactionQuery(id));
+        // return response.Match(JsonGet, JsonGet);
     }
 
     [HttpPost]
     [Route]
-    public ActionResult Post(IEnumerable<Transaction> transactions)
+    public async Task<ActionResult> Post(HttpPostedFileBase file, string currency)
     {
-        return JsonGet(new { Transactions = transactions, User = User.MapToUser() });
+        var response = await _mediator.Send(new UploadTransactionsCommand(file, currency));
+
+        if (!response.IsError)
+            return new HttpStatusCodeResult(HttpStatusCode.Created);
+
+        Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        return JsonGet(response.Errors);
     }
 
     [HttpPut]

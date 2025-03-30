@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using System.Reflection;
 using Application.Common.Interfaces.Data;
 using Dapper;
 using Domain;
@@ -26,9 +25,7 @@ public static class DependencyInjection
     {
         QuestPDF.Settings.License = LicenseType.Enterprise;
 
-#pragma warning disable CS0618 // Type or member is obsolete
         services.AddTransient<IDbConnection>(_ => new SqlConnection("Data Source=:memory"));
-#pragma warning restore CS0618 // Type or member is obsolete
         services.AddTransient<IAppDbContext, AppDbContext>();
 
         services.AddDommel();

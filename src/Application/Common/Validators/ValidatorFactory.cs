@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Application.Common.Validation;
+namespace Application.Common.Validators;
 
 public class ValidatorFactory : ValidatorFactoryBase
 {

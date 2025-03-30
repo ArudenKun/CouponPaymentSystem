@@ -7,9 +7,6 @@ namespace Application.Features.Users;
 [Mapper]
 public static partial class UserMapper
 {
-    [MapperIgnoreSource(nameof(AppPrincipal.SessionId))]
-    [MapperIgnoreSource(nameof(AppPrincipal.Claims))]
-    [MapperIgnoreSource(nameof(AppPrincipal.Identities))]
-    [MapperIgnoreSource(nameof(AppPrincipal.Identity))]
+    [MapperRequiredMapping(RequiredMappingStrategy.Target)]
     public static partial User MapToUser(this AppPrincipal appPrincipal);
 }

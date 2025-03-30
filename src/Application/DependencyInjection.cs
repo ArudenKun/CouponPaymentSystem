@@ -1,5 +1,4 @@
-﻿using Application.Common.Validation;
-using Application.Pipeline;
+﻿using Application.Pipeline;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceScan.SourceGenerator;
@@ -11,7 +10,6 @@ public static partial class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddValidators();
-        services.AddSingleton<ValidatorFactory>();
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
