@@ -30,6 +30,7 @@
         <None Include="Properties\launchSettings.json"/>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="BundleTransformer.NUglify" Version="1.15.3" />
         <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
     </ItemGroup>
     <ItemGroup>

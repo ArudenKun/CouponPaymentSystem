@@ -1,4 +1,5 @@
 ﻿using DataTables.AspNet.Core;
+using FluentValidation;
 
 namespace Web.Core.Features.Transactions.Queries;
 
@@ -34,4 +35,10 @@ public sealed class GetTransactionsDataTableQuery : ICacheableRequest<Transactio
 
     public string CacheKey { get; }
     public IEnumerable<string>? Tags => null;
+}
+
+public class GetTransactionsDataTableQueryValidator
+    : AbstractValidator<GetTransactionsDataTableQuery>
+{
+    public GetTransactionsDataTableQueryValidator() { }
 }
