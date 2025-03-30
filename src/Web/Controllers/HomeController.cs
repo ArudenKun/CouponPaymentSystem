@@ -1,15 +1,16 @@
 ﻿using System.Web.Mvc;
+using Web.Controllers.Common;
 
 namespace Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController : AppControllerBase
 {
+    [AllowAnonymous]
     public ActionResult Index()
     {
         return View();
     }
 
-    [Authorize]
     public ActionResult Upload()
     {
         ViewBag.Message = "Your application description page.";
@@ -17,6 +18,7 @@ public class HomeController : Controller
         return View();
     }
 
+    [AllowAnonymous]
     public ActionResult History()
     {
         ViewBag.Message = "Your contact page.";
@@ -24,19 +26,7 @@ public class HomeController : Controller
         return View();
     }
 
-    public ActionResult TestJson()
-    {
-        return Json(
-            new
-            {
-                Message = "Hello World!",
-                Text = "Test",
-                Yeet = "ASDASDAS",
-            },
-            JsonRequestBehavior.AllowGet
-        );
-    }
-
+    [AllowAnonymous]
     public ActionResult Login()
     {
         return View();

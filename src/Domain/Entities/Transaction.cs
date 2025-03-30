@@ -1,15 +1,12 @@
 ﻿using Domain.Common.Entities;
-using Domain.ValueObjects;
 
 namespace Domain.Entities;
 
-public readonly partial struct TransactionId;
-
-public class Transaction : IEntity<TransactionId>
+public class Transaction : IEntity
 {
-    public required TransactionId Id { get; init; }
+    public required Guid Id { get; init; }
 
-    public AccountName AccountName { get; set; }
+    public string AccountName { get; set; } = string.Empty;
 
-    public AccountNumber AccountNumber { get; set; }
+    public string AccountNumber { get; set; } = string.Empty;
 }

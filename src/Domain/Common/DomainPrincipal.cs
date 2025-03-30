@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
 
-namespace Domain;
+namespace Domain.Common;
 
 public class DomainPrincipal : ClaimsPrincipal
 {
@@ -18,7 +18,7 @@ public class DomainPrincipal : ClaimsPrincipal
 
     public T? GetClaimValue<T>(string claimType, T? defaultValue = default)
     {
-        var claim = FindFirst(claimType).Value;
+        var claim = FindFirst(claimType)?.Value;
         return claim is not null ? ChangeType(claim, defaultValue) : defaultValue;
     }
 

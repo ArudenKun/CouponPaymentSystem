@@ -5,16 +5,16 @@ using ZiggyCreatures.Caching.Fusion;
 
 namespace Application.Pipeline;
 
-public class CacheInvalidationBehaviour<TRequest, TResponse>
+public class FusionCacheInvalidationBehaviour<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICacheInvalidatorRequest<TResponse>
 {
     private readonly IFusionCache _fusionCache;
-    private readonly ILogger<CacheInvalidationBehaviour<TRequest, TResponse>> _logger;
+    private readonly ILogger<FusionCacheInvalidationBehaviour<TRequest, TResponse>> _logger;
 
-    public CacheInvalidationBehaviour(
+    public FusionCacheInvalidationBehaviour(
         IFusionCache fusionCache,
-        ILogger<CacheInvalidationBehaviour<TRequest, TResponse>> logger
+        ILogger<FusionCacheInvalidationBehaviour<TRequest, TResponse>> logger
     )
     {
         _fusionCache = fusionCache;
@@ -27,7 +27,7 @@ public class CacheInvalidationBehaviour<TRequest, TResponse>
         CancellationToken cancellationToken
     )
     {
-        _logger.LogTrace(
+        _logger.LogDebug(
             "Handling request of type {RequestType} with details {@Request}",
             nameof(request),
             request
@@ -36,7 +36,7 @@ public class CacheInvalidationBehaviour<TRequest, TResponse>
         if (!string.IsNullOrEmpty(request.CacheKey))
         {
             await _fusionCache.RemoveAsync(request.CacheKey, token: cancellationToken);
-            _logger.LogTrace("Cache key {CacheKey} removed from cache", request.CacheKey);
+            _logger.LogDebug("Cache key {CacheKey} removed from cache", request.CacheKey);
         }
 
         if (request.Tags == null || !request.Tags.Any())
@@ -45,7 +45,7 @@ public class CacheInvalidationBehaviour<TRequest, TResponse>
         foreach (var tag in request.Tags)
         {
             await _fusionCache.RemoveByTagAsync(tag, token: cancellationToken);
-            _logger.LogTrace("Cache tag {CacheTag} removed from cache", tag);
+            _logger.LogDebug("Cache tag {CacheTag} removed from cache", tag);
         }
 
         return response;

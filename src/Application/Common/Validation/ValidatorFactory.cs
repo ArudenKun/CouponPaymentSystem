@@ -2,11 +2,11 @@
 
 namespace Application.Common.Validation;
 
-public class AppValidatorFactory : ValidatorFactoryBase
+public class ValidatorFactory : ValidatorFactoryBase
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public AppValidatorFactory(IServiceProvider serviceProvider)
+    public ValidatorFactory(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }

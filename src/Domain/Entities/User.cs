@@ -2,16 +2,13 @@
 
 namespace Domain.Entities;
 
-public readonly partial struct UserId;
-
-public class User : IEntity<UserId>
+public class User : IEntity
 {
     private const string EmptyValue = "UNKNOWN";
 
     public static readonly User Empty = new()
     {
-        Id = UserId.From(EmptyValue),
-        SessionId = SessionId.From(0),
+        Id = EmptyValue,
         FirstName = EmptyValue,
         MiddleName = EmptyValue,
         LastName = EmptyValue,
@@ -19,11 +16,12 @@ public class User : IEntity<UserId>
         AppRoleName = EmptyValue,
     };
 
-    public required UserId Id { get; init; }
-    public required SessionId SessionId { get; init; }
+    public required string Id { get; init; }
     public required string FirstName { get; init; }
     public required string MiddleName { get; init; }
     public required string LastName { get; init; }
     public required string AppRoleId { get; init; }
     public required string AppRoleName { get; init; }
+
+    public string FullName => $"{FirstName} {MiddleName} {LastName}";
 }

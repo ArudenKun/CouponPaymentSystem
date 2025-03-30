@@ -26,7 +26,7 @@ public class FusionCacheBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
         CancellationToken cancellationToken
     )
     {
-        _logger.LogTrace(
+        _logger.LogDebug(
             "Handling request of type {RequestType} with cache key {CacheKey}",
             nameof(request),
             request.CacheKey

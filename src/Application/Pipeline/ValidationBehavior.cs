@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Pipeline;
 
@@ -9,9 +10,14 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     where TResponse : IErrorOr
 {
     private readonly IValidator<TRequest>? _validator;
+    private readonly ILogger<ValidationBehavior<TRequest, TResponse>> _logger;
 
-    public ValidationBehavior(IValidator<TRequest>? validator = null)
+    public ValidationBehavior(
+        ILogger<ValidationBehavior<TRequest, TResponse>> logger,
+        IValidator<TRequest>? validator = null
+    )
     {
+        _logger = logger;
         _validator = validator;
     }
 
@@ -23,6 +29,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     {
         if (_validator is null)
         {
+            _logger.LogWarning("No validator registered for {Request}", typeof(TRequest).Name);
             return await next();
         }
 
@@ -33,9 +40,13 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             return await next();
         }
 
-        var errors = validationResult.Errors.Select(error =>
-            Error.Validation(code: error.PropertyName, description: error.ErrorMessage)
-        );
+        var errors = validationResult
+            .Errors.Select(error =>
+                Error.Validation(code: error.PropertyName, description: error.ErrorMessage)
+            )
+            .ToList();
+
+        _logger.LogError("{Request} validation failed", typeof(TRequest).Name);
 
         return (dynamic)errors;
     }

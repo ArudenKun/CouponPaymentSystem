@@ -1,13 +1,12 @@
-using System.ComponentModel;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Application;
+using Application.Common.Validation;
 using AspNet.DependencyInjection;
 using BundleTransformer.Core.Bundles;
-using Domain.Entities;
-using Domain.ValueObjects;
+using FluentValidation.Mvc;
 using Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Owin;
@@ -26,18 +25,17 @@ public class MvcApplication : DependencyInjectionHttpApplication
 {
     protected override Assembly Assembly => typeof(MvcApplication).Assembly;
 
-    protected override void OnApplicationStart()
-    {
-        base.OnApplicationStart();
-    }
-
     protected override void Configure(IAppBuilder app, IServiceProvider serviceProvider)
     {
+        FluentValidationModelValidatorProvider.Configure(provider =>
+            provider.ValidatorFactory = serviceProvider.GetRequiredService<ValidatorFactory>()
+        );
+
         app.UseCookieAuthentication(
             new CookieAuthenticationOptions
             {
                 AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
-                LoginPath = new PathString("/login"),
+                LoginPath = new PathString("/auth/login"),
                 CookieName = CookieAuthenticationDefaults.CookiePrefix + "CouponPaymentSystem.",
                 ExpireTimeSpan = TimeSpan.FromMinutes(15),
                 SlidingExpiration = false,
@@ -50,7 +48,7 @@ public class MvcApplication : DependencyInjectionHttpApplication
 
     protected override void ConfigureServices(IServiceCollection services)
     {
-        services.AddApplication().AddInfrastructure().AddWeb();
+        services.AddApplication().AddInfrastructure(Helper.IsDebug).AddWeb();
     }
 
     protected override void ConfigureFilters(GlobalFilterCollection filters)

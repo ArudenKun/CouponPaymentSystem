@@ -1,46 +1,53 @@
 ﻿using System.Web.Mvc;
+using Application.Common.Interfaces.Data;
+using Application.Features.Transactions.Queries;
+using Application.Features.Users;
 using Domain.Entities;
+using MediatR;
 using Web.Controllers.Common;
 
 namespace Web.Controllers.Api;
 
 [RoutePrefix("api/transactions")]
-[AllowAnonymous]
 public class TransactionsController : AppControllerBase
 {
-    [HttpGet]
-    [Route]
-    public ActionResult GetAll(int page = 1, int pageSize = 10)
-    {
-        if (page < 1)
-            page = 1;
-        if (pageSize < 1 || pageSize > 100)
-            pageSize = 10;
+    private readonly IAppDbContext _appDbContext;
+    private readonly IMediator _mediator;
 
-        // Your logic here
-        return JsonGet(new { page, pageSize });
+    public TransactionsController(IAppDbContext appDbContext, IMediator mediator)
+    {
+        _appDbContext = appDbContext;
+        _mediator = mediator;
     }
 
     [HttpGet]
-    [Route("{id:int}")]
-    public ActionResult Get(int id)
+    [Route]
+    public ActionResult GetAll()
     {
-        return JsonGet($"Get {id}");
+        return JsonGet(User.MapToUser());
+    }
+
+    [HttpGet]
+    [Route("{id}")]
+    public async Task<ActionResult> Get(string id)
+    {
+        var response = await _mediator.Send(new GetTransactionQuery(id));
+        return response.Match(JsonGet, JsonGet);
     }
 
     [HttpPost]
     [Route]
     public ActionResult Post(IEnumerable<Transaction> transactions)
     {
-        return Json(transactions);
+        return JsonGet(new { Transactions = transactions, User = User.MapToUser() });
     }
 
     [HttpPut]
     [HttpPatch]
     [Route("{id:int}")]
-    public ActionResult Update()
+    public ActionResult Update(int id)
     {
-        return JsonGet(User);
+        return JsonGet(new { Id = id, UserTest = User.MapToUser() });
     }
 
     [HttpDelete]

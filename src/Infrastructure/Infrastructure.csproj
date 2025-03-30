@@ -9,8 +9,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MicroOrm.Dapper.Repositories" Version="1.28.0" />
+      <PackageReference Include="Bogus" Version="35.6.2" />
+      <PackageReference Include="Dommel" Version="3.3.4" />
       <PackageReference Include="QuestPDF" Version="2025.1.7" />
+      <PackageReference Include="Serilog.Enrichers.ClassName" Version="0.3.0" />
+      <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
       <PackageReference Include="ServiceScan.SourceGenerator" Version="1.4.6">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
