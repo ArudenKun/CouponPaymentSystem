@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
+      <PackageReference Include="Dommel" Version="3.3.4" />
+      <PackageReference Include="ErrorOr" Version="2.0.1" />
+      <PackageReference Include="FluentValidation" Version="11.11.0" />
+      <PackageReference Include="MediatR" Version="12.4.1" />
+      <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="QuestPDF" Version="2025.1.7" />
+      <PackageReference Include="Riok.Mapperly" Version="4.2.0" />
+      <PackageReference Include="ServiceScan.SourceGenerator" Version="1.4.6">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.2" />
+      <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\lib\DataTables.AspNet.Core\DataTables.AspNet.Core.csproj" />
+    </ItemGroup>
+
+</Project>

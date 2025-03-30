@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.97">
+﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.88">
     <PropertyGroup>
         <TargetFramework>net48</TargetFramework>
         <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
@@ -20,19 +20,21 @@
         <Content Include="Views\Web.config"/>
     </ItemGroup>
     <ItemGroup>
+        <Folder Include="App_Data\"/>
+        <Folder Include="Lib\datatables\" />
+        <Folder Include="Models\"/>
+        <Folder Include="Scripts\"/>
+    </ItemGroup>
+    <ItemGroup>
         <None Include="libman.json"/>
         <None Include="Properties\launchSettings.json"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="BundleTransformer.NUglify" Version="1.15.3" />
-        <PackageReference Include="DataTables.AspNet.Mvc5" Version="2.0.2" />
-        <PackageReference Include="FluentValidation.MVC5" Version="[8.6.1]" />
-        <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.2" />
-        <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.2" />
         <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\lib\AspNet.DependencyInjection\AspNet.DependencyInjection.csproj" />
-      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\..\lib\DataTables.AspNet.Mvc5\DataTables.AspNet.Mvc5.csproj" />
+      <ProjectReference Include="..\Web.Core\Web.Core.csproj" />
     </ItemGroup>
 </Project>

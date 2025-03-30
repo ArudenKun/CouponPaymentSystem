@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
-using Application.Common;
+using Web.Core;
+using Web.Core.Models;
 
 namespace Web.Controllers.Common;
 
