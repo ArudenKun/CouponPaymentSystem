@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using Application.Common.Interfaces.Data;
 using Application.Features.Transactions.Queries;
 using Application.Features.Users;
 using Domain.Entities;
@@ -11,12 +10,10 @@ namespace Web.Controllers.Api;
 [RoutePrefix("api/transactions")]
 public class TransactionsController : AppControllerBase
 {
-    private readonly IAppDbContext _appDbContext;
     private readonly IMediator _mediator;
 
-    public TransactionsController(IAppDbContext appDbContext, IMediator mediator)
+    public TransactionsController(IMediator mediator)
     {
-        _appDbContext = appDbContext;
         _mediator = mediator;
     }
 

@@ -55,4 +55,10 @@ public class AuthController : AppControllerBase
         AuthenticationManager.SignIn(authProperties, identity);
         return RedirectToLocal(returnUrl);
     }
+
+    [Route("logout")]
+    public ActionResult Logout()
+    {
+        throw new NotImplementedException();
+    }
 }

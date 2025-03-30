@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
 using Ardalis.GuardClauses;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Riok.Mapperly.Abstractions;
 
 namespace Web.Controllers.Common;
@@ -9,6 +10,7 @@ public class JsonNetResult : JsonResult
 {
     private static readonly JsonSerializerSettings DefaultSerializerSettings = new()
     {
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
         Formatting = Formatting.Indented,
         NullValueHandling = NullValueHandling.Ignore,
     };
