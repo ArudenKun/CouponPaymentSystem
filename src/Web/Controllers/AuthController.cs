@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Bogus;
 using Domain.Common.Enums;
 using Domain.Entities;
+using Htmx;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Newtonsoft.Json;
@@ -53,7 +54,17 @@ public class AuthController : AppControllerBase
         };
         AuthenticationManager.SignOut(CookieAuthenticationDefaults.AuthenticationType);
         AuthenticationManager.SignIn(authProperties, identity);
-        return RedirectToLocal(returnUrl);
+
+        if (IsLocalUrl(returnUrl))
+        {
+            Response.Htmx(h => h.Redirect(returnUrl));
+        }
+        else
+        {
+            return RedirectToHome();
+        }
+
+        return Empty();
     }
 
     [Route("logout")]

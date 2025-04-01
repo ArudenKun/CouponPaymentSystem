@@ -17,8 +17,6 @@ public class GetTransactionsDataTableQuery : ICacheableRequest<TransactionDataTa
         + $"Draw:{Request.Draw}-"
         + $"Start:{Request.Start}-"
         + $"Length:{Request.Length}-"
-        + $"Order:{Request.Columns.FirstOrDefault()?.Sort.Order}-"
-        + $"OrderDirection:{Request.Columns.FirstOrDefault()?.Sort.Direction}-"
         + $"Search:{Request.Search.Value}-"
         + $"PageSize:{Request.Columns.FirstOrDefault()?.Name}-"
         + $"Skip:{Request.Start}";

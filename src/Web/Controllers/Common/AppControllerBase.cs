@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using Application.Common;
+using Htmx;
 
 namespace Web.Controllers.Common;
 
@@ -18,8 +19,12 @@ public abstract class AppControllerBase : Controller
 
     public bool IsAuthenticated => _isAuthenticated.Value;
 
-    protected ActionResult RedirectToLocal(string returnUrl) =>
-        Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToHome();
+    protected bool IsLocalUrl(string url) => Url.IsLocalUrl(url);
+
+    protected ActionResult RedirectToLocal(string returnUrl)
+    {
+        return Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToHome();
+    }
 
     protected ActionResult RedirectToReferrer()
     {
@@ -38,5 +43,30 @@ public abstract class AppControllerBase : Controller
     protected JsonResult JsonGet(object data)
     {
         return Json(data, JsonRequestBehavior.AllowGet);
+    }
+
+    protected ActionResult Empty()
+    {
+        return new EmptyResult();
+    }
+
+    protected ActionResult HtmxView()
+    {
+        if (Request.IsHtmx())
+        {
+            return PartialView();
+        }
+
+        return View();
+    }
+
+    protected ActionResult HtmxView<TModel>(TModel model)
+    {
+        if (Request.IsHtmx())
+        {
+            return PartialView(model);
+        }
+
+        return View(model);
     }
 }

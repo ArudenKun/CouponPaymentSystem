@@ -114,6 +114,7 @@ public class MvcApplication : DependencyInjectionHttpApplication
             new CustomScriptBundle("~/bundles/js/base")
                 .NullOrderer()
                 .Include("~/Lib/jquery/jquery.unobtrusive-ajax.min.js")
+                .Include("~/Lib/htmx/htmx.js")
                 .Include("~/Lib/bootstrap/js/bootstrap.bundle.min.js")
                 .Include("~/Lib/sweetalert2/sweetalert2.all.min.js")
                 .Include("~/Scripts/script.js")

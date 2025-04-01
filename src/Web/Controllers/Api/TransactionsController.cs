@@ -6,6 +6,7 @@ using Application.Features.Transactions.Queries;
 using Application.Features.Users;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
+using Htmx;
 using MediatR;
 using Web.Controllers.Common;
 
@@ -33,6 +34,7 @@ public class TransactionsController : AppControllerBase
             response.Value.Data
         );
 
+        Response.Htmx(h => h.WithTrigger("reloadTable"));
         return new DataTablesJsonResult(dtResponse, JsonRequestBehavior.AllowGet);
     }
 

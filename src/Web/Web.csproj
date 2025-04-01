@@ -33,6 +33,7 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\lib\AspNet.DependencyInjection\AspNet.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\lib\Htmx\Htmx.csproj" />
       <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 </Project>

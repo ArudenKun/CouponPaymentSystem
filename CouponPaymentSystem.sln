@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.DependencyInjection", "lib\AspNet.DependencyInjection\AspNet.DependencyInjection.csproj", "{9051687C-328F-4AAD-88ED-06C4E7EF67E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Htmx", "lib\Htmx\Htmx.csproj", "{F0F1E35E-6E16-46F2-8A6C-850C0C2A1A4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,7 @@ Global
 		{7C0A0897-367F-4F89-9F63-0B2AC083A95D} = {BC369BBD-C5A9-424E-8971-75C852BF47AE}
 		{EA63F08C-A6BD-40DA-B69B-DAE98A3C2259} = {BC369BBD-C5A9-424E-8971-75C852BF47AE}
 		{9051687C-328F-4AAD-88ED-06C4E7EF67E4} = {22621AB4-1554-4883-A87B-E1F55B76EB83}
+		{F0F1E35E-6E16-46F2-8A6C-850C0C2A1A4E} = {22621AB4-1554-4883-A87B-E1F55B76EB83}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9A67C96C-59EC-4477-8151-A88ED67F85C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -55,5 +58,9 @@ Global
 		{9051687C-328F-4AAD-88ED-06C4E7EF67E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9051687C-328F-4AAD-88ED-06C4E7EF67E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9051687C-328F-4AAD-88ED-06C4E7EF67E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0F1E35E-6E16-46F2-8A6C-850C0C2A1A4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0F1E35E-6E16-46F2-8A6C-850C0C2A1A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0F1E35E-6E16-46F2-8A6C-850C0C2A1A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0F1E35E-6E16-46F2-8A6C-850C0C2A1A4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

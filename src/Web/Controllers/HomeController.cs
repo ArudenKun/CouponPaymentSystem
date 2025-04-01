@@ -1,5 +1,7 @@
 ﻿using System.Web.Mvc;
+using Htmx;
 using Web.Controllers.Common;
+using Web.ViewModels;
 
 namespace Web.Controllers;
 
@@ -8,27 +10,27 @@ public class HomeController : AppControllerBase
     [AllowAnonymous]
     public ActionResult Index()
     {
-        return View();
+        return HtmxView();
     }
 
     public ActionResult Upload()
     {
         ViewBag.Message = "Your application description page.";
 
-        return View();
+        return HtmxView();
     }
 
     [AllowAnonymous]
     public ActionResult History()
     {
         ViewBag.Message = "Your contact page.";
-
-        return View();
+        var viewModel = new HistoryViewModel();
+        return HtmxView(viewModel);
     }
 
     [AllowAnonymous]
     public ActionResult Login()
     {
-        return View();
+        return HtmxView();
     }
 }
