@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <PolyGuard>true</PolyGuard>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="System.Web"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="JavaScript\antiforgerySnippet.js" LogicalName="AntiforgeryJavaScript" />
+        <EmbeddedResource Include="JavaScript\antiforgerySnippet.min.js" LogicalName="AntiforgeryJavaScriptMinified" />
+    </ItemGroup>
+
+    <ItemGroup>
+		<PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Polyfill" Version="7.24.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+    </ItemGroup>
+
+</Project>
