@@ -8,16 +8,10 @@ namespace Web.Controllers.Common;
 public abstract class AppControllerBase : Controller
 {
     private AppPrincipal? _user;
-    private readonly Lazy<bool> _isAuthenticated;
-
-    protected AppControllerBase()
-    {
-        _isAuthenticated = new Lazy<bool>(() => User.Identity?.IsAuthenticated ?? false);
-    }
 
     public new AppPrincipal User => _user ??= new AppPrincipal(base.User);
 
-    public bool IsAuthenticated => _isAuthenticated.Value;
+    public bool IsAuthenticated => User.Identity?.IsAuthenticated ?? false;
 
     protected bool IsLocalUrl(string url) => Url.IsLocalUrl(url);
 

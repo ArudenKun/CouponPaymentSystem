@@ -3,10 +3,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using DryIoc;
-using DryIoc.Microsoft.DependencyInjection;
-using DryIoc.Mvc;
-using DryIoc.Owin;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Autofac.Integration.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Owin;
 
@@ -16,7 +15,7 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
 {
     private static IContainer? _container;
 
-    protected virtual Assembly? Assembly => null;
+    protected abstract Assembly Assembly { get; }
 
     // ReSharper disable once UnusedMember.Global
     public void Configuration(IAppBuilder app)
@@ -24,8 +23,9 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
         BuildServiceProvider();
         Guard.NotNull(_container);
 
-        app.UseDryIocOwinMiddleware(_container);
-        Configure(app, _container);
+        app.UseAutofacMiddleware(_container);
+        app.UseAutofacMvc();
+        Configure(app, new AutofacServiceProvider(_container));
     }
 
     protected abstract void Configure(IAppBuilder app, IServiceProvider serviceProvider);
@@ -64,10 +64,29 @@ public abstract class DependencyInjectionHttpApplication : HttpApplication
             return;
         }
 
-        var container = new Container();
+        var container = new ContainerBuilder();
+
+        // Register your MVC controllers. (MvcApplication is the name of
+        // the class in Global.asax.)
+        container.RegisterControllers(Assembly);
+
+        // OPTIONAL: Register model binders that require DI.
+        container.RegisterModelBinders(Assembly);
+        container.RegisterModelBinderProvider();
+
+        // OPTIONAL: Register web abstractions like HttpContextBase.
+        container.RegisterModule<AutofacWebTypesModule>();
+
+        // OPTIONAL: Enable property injection in view pages.
+        container.RegisterSource(new ViewRegistrationSource());
+
+        // OPTIONAL: Enable property injection into action filters.
+        container.RegisterFilterProvider();
+
         var services = new ServiceCollection();
         ConfigureServices(services);
-        _container = container.WithDependencyInjectionAdapter(services);
-        _container = _container.WithMvc([Assembly]);
+        container.Populate(services);
+        _container = container.Build();
+        DependencyResolver.SetResolver(new AutofacDependencyResolver(_container));
     }
 }

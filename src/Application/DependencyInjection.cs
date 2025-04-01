@@ -1,6 +1,6 @@
 ﻿using Application.Common.Validators;
-using Application.Pipeline;
 using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceScan.SourceGenerator;
 
@@ -12,20 +12,15 @@ public static partial class DependencyInjection
     {
         services.AddSingleton<ValidatorFactory>();
         services.AddValidators();
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
-            // config.NotificationPublisher = new ParallelNoWaitPublisher();
-            // config.AddRequestPreProcessor(
-            //     typeof(IRequestPreProcessor<>),
-            //     typeof(ValidationPreProcessor<>)
-            // );
-            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            config.AddOpenBehavior(typeof(FusionCacheBehaviour<,>));
-            config.AddOpenBehavior(typeof(FusionCacheInvalidationBehaviour<,>));
-            // config.AddOpenBehavior(typeof(PerformanceBehaviour<,>));
-        });
+        services.AddMediatR();
         return services;
+    }
+
+    private static void AddMediatR(this IServiceCollection services)
+    {
+        services.AddTransient<IMediator, Mediator>();
+        services.AddMediatRHandlers();
+        services.AddMediatRBehaviors();
     }
 
     [GenerateServiceRegistrations(
@@ -35,4 +30,16 @@ public static partial class DependencyInjection
         Lifetime = ServiceLifetime.Transient
     )]
     private static partial void AddValidators(this IServiceCollection services);
+
+    [GenerateServiceRegistrations(
+        AssignableTo = typeof(IRequestHandler<,>),
+        Lifetime = ServiceLifetime.Transient
+    )]
+    private static partial void AddMediatRHandlers(this IServiceCollection services);
+
+    [GenerateServiceRegistrations(
+        AssignableTo = typeof(IPipelineBehavior<,>),
+        Lifetime = ServiceLifetime.Transient
+    )]
+    private static partial void AddMediatRBehaviors(this IServiceCollection services);
 }

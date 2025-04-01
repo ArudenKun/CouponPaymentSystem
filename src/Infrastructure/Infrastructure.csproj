@@ -13,8 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Bogus" Version="35.6.2" />
-      <PackageReference Include="Dommel" Version="3.3.4" />
+      <PackageReference Include="linq2db.AspNet" Version="5.4.1" />
       <PackageReference Include="QuestPDF" Version="2025.1.7" />
       <PackageReference Include="Serilog.Enrichers.ClassName" Version="0.3.0" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />

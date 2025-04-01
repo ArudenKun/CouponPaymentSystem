@@ -1,13 +1,14 @@
-﻿using System.Data;
-using Application.Common.Interfaces.Data;
+﻿using Application.Common.Interfaces;
 using Domain.Entities;
+using LinqToDB;
+using LinqToDB.Data;
 
 namespace Infrastructure.Data;
 
-internal sealed class AppDbContext : AppDbContextBase, IAppDbContext
+internal sealed class AppDbContext : DataConnection, IAppDbContext
 {
-    public AppDbContext(IDbConnection connection)
-        : base(connection) { }
+    public AppDbContext(DataOptions<AppDbContext> options)
+        : base(options.Options) { }
 
-    public IRepository<Transaction> Transactions => Set<Transaction>();
+    public ITable<Transaction> Transactions => this.GetTable<Transaction>();
 }
