@@ -21,10 +21,8 @@ public abstract class AppControllerBase : Controller
 
     protected bool IsLocalUrl(string url) => Url.IsLocalUrl(url);
 
-    protected ActionResult RedirectToLocal(string returnUrl)
-    {
-        return Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToHome();
-    }
+    protected ActionResult RedirectToLocal(string returnUrl) =>
+        Url.IsLocalUrl(returnUrl) ? Redirect(returnUrl) : RedirectToHome();
 
     protected ActionResult RedirectToReferrer()
     {
@@ -40,33 +38,26 @@ public abstract class AppControllerBase : Controller
 
     protected ActionResult RedirectToHome() => RedirectToAction("Index", "Home");
 
-    protected JsonResult JsonGet(object data)
-    {
-        return Json(data, JsonRequestBehavior.AllowGet);
-    }
+    protected JsonResult JsonGet(object data) => Json(data, JsonRequestBehavior.AllowGet);
 
-    protected ActionResult Empty()
-    {
-        return new EmptyResult();
-    }
+    protected static ActionResult Empty() => new EmptyResult();
 
-    protected ActionResult HtmxView()
+    protected ActionResult HtmxView(object model) => HtmxView(null, model);
+
+    protected ActionResult HtmxView(string? viewName = null, object? model = null)
     {
-        if (Request.IsHtmx())
+        var isHtmxRequest = Request.IsHtmx();
+
+        if (model is null)
         {
-            return PartialView();
+            return isHtmxRequest ? PartialView(viewName) : View(viewName);
         }
 
-        return View();
-    }
-
-    protected ActionResult HtmxView<TModel>(TModel model)
-    {
-        if (Request.IsHtmx())
+        if (!string.IsNullOrEmpty(viewName) || !string.IsNullOrWhiteSpace(viewName))
         {
-            return PartialView(model);
+            return isHtmxRequest ? PartialView(viewName, model) : View(viewName, model);
         }
 
-        return View(model);
+        return isHtmxRequest ? PartialView(model) : View(model);
     }
 }
