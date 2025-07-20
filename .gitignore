@@ -1,4 +1,7 @@
-﻿### VisualStudioCode template
+﻿### Custom
+App_Data
+
+### VisualStudioCode template
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
