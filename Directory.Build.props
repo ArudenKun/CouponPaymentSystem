@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <CSharpier_Bypass>true</CSharpier_Bypass>
+  </PropertyGroup>
+</Project>

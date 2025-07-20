@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Medallion.Threading.SystemSqlServer</RootNamespace>
+    <TargetFramework>net462</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DistributedLock.Core\DistributedLock.Core.csproj" />
+  </ItemGroup>
+</Project>
