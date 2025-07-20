@@ -2,7 +2,6 @@
 using Abp.BlobStoring;
 using Abp.FluentValidation;
 using Abp.Modules;
-using Castle.MicroKernel.Registration;
 using CouponPaymentSystem.Core;
 using CouponPaymentSystem.Core.Common.Extensions;
 using Humanizer;
