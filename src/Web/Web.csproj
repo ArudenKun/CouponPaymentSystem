@@ -47,6 +47,5 @@
     <ProjectReference Include="..\..\lib\DistributedLock.SystemSqlServer\DistributedLock.SystemSqlServer.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Database\Database.csproj" />
   </ItemGroup>
 </Project>

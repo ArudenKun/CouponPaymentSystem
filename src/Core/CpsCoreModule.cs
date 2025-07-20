@@ -1,18 +1,21 @@
 ﻿using Abp;
+using Abp.Configuration.Startup;
 using Abp.Modules;
+using Abp.NHibernate;
 using Abp.Runtime.Security;
 using Abp.Timing;
-using Aoxe.Snowflake;
 using Castle.MicroKernel.Registration;
 using CouponPaymentSystem.Core.Authorization;
 using CouponPaymentSystem.Core.Common;
 using CouponPaymentSystem.Core.Common.Extensions;
 using CouponPaymentSystem.Core.Configuration.Options;
 using CouponPaymentSystem.Core.Timing;
+using FluentNHibernate.Cfg.Db;
+using NHibernate.Tool.hbm2ddl;
 
 namespace CouponPaymentSystem.Core;
 
-[DependsOn(typeof(AbpKernelModule))]
+[DependsOn(typeof(AbpKernelModule), typeof(AbpNHibernateModule))]
 public class CpsCoreModule : AbpModule
 {
     public override void PreInitialize()
@@ -24,10 +27,7 @@ public class CpsCoreModule : AbpModule
                 .DependsOn(
                     Dependency.OnValue("path", IocManager.Resolve<IPathManager>().ConfigPath)
                 )
-                .LifestyleSingleton(),
-            Component
-                .For<SnowflakeIdGenerator>()
-                .UsingFactoryMethod(() => new SnowflakeIdGenerator(1, 1))
+                .LifestyleSingleton()
         );
         Configuration.DefaultNameOrConnectionString = IocManager
             .Resolve<CpsOptions>()
@@ -38,6 +38,25 @@ public class CpsCoreModule : AbpModule
         Configuration.Settings.SettingEncryptionConfiguration.DefaultPassPhrase =
             CpsConstants.DefaultPassPhrase;
         SimpleStringCipher.DefaultPassPhrase = CpsConstants.DefaultPassPhrase;
+
+        Configuration
+            .Modules.AbpNHibernate()
+            .FluentConfiguration.Database(
+                MsSqlConfiguration.MsSql2012.ConnectionString(
+                    Configuration.DefaultNameOrConnectionString
+                )
+            )
+            .Mappings(m => m.FluentMappings.AddFromAssemblyOf<CpsCoreModule>())
+            .ExposeConfiguration(c =>
+            {
+                using var writer = new StringWriter();
+                new SchemaExport(c).Create(writer, true);
+                writer.Flush();
+                File.WriteAllText(
+                    IocManager.Resolve<IPathManager>().AppDataDir.Combine("script.sql"),
+                    writer.ToString()
+                );
+            });
     }
 
     public override void Initialize()

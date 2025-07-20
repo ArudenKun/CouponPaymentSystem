@@ -2,9 +2,10 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
-namespace CouponPaymentSystem.Database.Common.Expressions;
+namespace CouponPaymentSystem.Core.Common.Expressions;
 
 /// <summary>
 /// Provides virtual methods that can be used by subclasses to parse an expression tree.

@@ -2,13 +2,13 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Ardalis.GuardClauses;
-using CouponPaymentSystem.Database.Common.Expressions;
+using CouponPaymentSystem.Core.Common.Expressions;
 using NHibernate;
 using NHibernate.Engine;
 using NHibernate.Type;
 using NHibernate.UserTypes;
 
-namespace CouponPaymentSystem.Database.Common;
+namespace CouponPaymentSystem.Core.Common;
 
 public abstract class CompositeUserTypeBase<T> : ICompositeUserType
 {

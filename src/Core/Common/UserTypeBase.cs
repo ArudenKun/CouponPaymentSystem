@@ -4,7 +4,7 @@ using NHibernate.Engine;
 using NHibernate.SqlTypes;
 using NHibernate.UserTypes;
 
-namespace CouponPaymentSystem.Database.Common;
+namespace CouponPaymentSystem.Core.Common;
 
 public abstract class UserTypeBase : IUserType
 {

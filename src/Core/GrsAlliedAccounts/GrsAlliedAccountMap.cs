@@ -1,7 +1,6 @@
 ﻿using Abp.NHibernate.EntityMappings;
-using CouponPaymentSystem.Core.GrsAlliedAccounts;
 
-namespace CouponPaymentSystem.Database.GrsAlliedAccounts;
+namespace CouponPaymentSystem.Core.GrsAlliedAccounts;
 
 public class GrsAlliedAccountMap : EntityMap<GrsAlliedAccount, string>
 {

@@ -20,7 +20,6 @@ using CouponPaymentSystem.Application;
 using CouponPaymentSystem.Core.Common;
 using CouponPaymentSystem.Core.Common.Extensions;
 using CouponPaymentSystem.Core.Configuration.Options;
-using CouponPaymentSystem.Database;
 using Hangfire;
 using Hangfire.SqlServer;
 using Medallion.Threading;
@@ -30,14 +29,14 @@ using Microsoft.Owin.Security;
 namespace CouponPaymentSystem;
 
 [DependsOn(
-    typeof(CpsDatabaseModule),
     typeof(CpsApplicationModule),
     typeof(AbpOwinModule),
     typeof(AbpWebApiModule),
     typeof(AbpWebSignalRModule),
     typeof(AbpHangfireModule),
     typeof(AbpWebMvcModule),
-    typeof(AbpBlobStoringFileSystemModule)
+    typeof(AbpBlobStoringFileSystemModule),
+    typeof(SystemWebModule)
 )]
 public class CpsModule : AbpModule
 {
@@ -65,21 +64,16 @@ public class CpsModule : AbpModule
             Component
                 .For<IAuthenticationManager>()
                 .UsingFactoryMethod(() => HttpContext.Current.GetOwinContext().Authentication)
-                .LifestyleTransient(),
+                .LifestylePerWebRequest(),
             Component
                 .For<
                     IDistributedLockProvider,
                     IDistributedUpgradeableReaderWriterLock,
                     IDistributedSemaphore
                 >()
-                .ImplementedBy<SqlDistributedSynchronizationProvider>()
-                .DependsOn(
-                    (kernel, _) =>
-                        Dependency.OnValue(
-                            "connectionString",
-                            kernel.Resolve<CpsOptions>().Cps.ConnectionString
-                        )
-                )
+                .UsingFactoryMethod(kernel => new SqlDistributedSynchronizationProvider(
+                    kernel.Resolve<CpsOptions>().Cps.ConnectionString
+                ))
                 .LifestyleSingleton()
         );
 

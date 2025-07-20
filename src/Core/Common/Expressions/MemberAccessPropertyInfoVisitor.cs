@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace CouponPaymentSystem.Database.Common.Expressions;
+namespace CouponPaymentSystem.Core.Common.Expressions;
 
 /// <summary>
 /// Inherits from the <see cref="ExpressionVisitor"/> base class and implements a expression visitor

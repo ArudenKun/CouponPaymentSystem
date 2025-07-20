@@ -4,7 +4,7 @@ using NHibernate;
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
 
-namespace CouponPaymentSystem.Database.Common;
+namespace CouponPaymentSystem.Core.Common;
 
 public class SmartEnumValueUserType<TEnum> : SmartEnumValueUserType<TEnum, int>
     where TEnum : SmartEnum<TEnum, int>;

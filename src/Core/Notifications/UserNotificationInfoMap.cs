@@ -1,7 +1,7 @@
 ﻿using Abp.NHibernate.EntityMappings;
 using Abp.Notifications;
 
-namespace CouponPaymentSystem.Database.Notifications;
+namespace CouponPaymentSystem.Core.Notifications;
 
 public class UserNotificationInfoMap : EntityMap<UserNotificationInfo, Guid>
 {
@@ -12,7 +12,6 @@ public class UserNotificationInfoMap : EntityMap<UserNotificationInfo, Guid>
         Map(x => x.TenantId);
         Map(x => x.TenantNotificationId).Not.Nullable();
         Map(x => x.UserId).Not.Nullable();
-
         this.MapCreationTime();
     }
 }

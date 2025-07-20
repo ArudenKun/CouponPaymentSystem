@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Abp" Version="9.4.2" />
-    <PackageReference Include="Aoxe.Snowflake" Version="2025.2.0" />
+    <PackageReference Include="Abp.NHibernate" Version="9.4.2" />
     <PackageReference Include="Ardalis.GuardClauses" Version="5.0.0" />
     <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
     <PackageReference Include="AutoInterface" Version="2.4.0">

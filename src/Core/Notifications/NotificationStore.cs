@@ -4,10 +4,10 @@ using Abp.Dependency;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Extensions;
-using Abp.Linq;
 using Abp.Linq.Expressions;
 using Abp.Linq.Extensions;
 using Abp.Notifications;
+using NHibernate.Linq;
 
 namespace CouponPaymentSystem.Core.Notifications;
 
@@ -16,18 +16,16 @@ namespace CouponPaymentSystem.Core.Notifications;
 /// </summary>
 public class NotificationStore : INotificationStore, ITransientDependency
 {
-    public IAsyncQueryableExecuter AsyncQueryableExecuter { get; set; }
-
     private readonly IRepository<NotificationInfo, Guid> _notificationRepository;
     private readonly IRepository<TenantNotificationInfo, Guid> _tenantNotificationRepository;
     private readonly IRepository<UserNotificationInfo, Guid> _userNotificationRepository;
+
     private readonly IRepository<
         NotificationSubscriptionInfo,
         Guid
     > _notificationSubscriptionRepository;
+
     private readonly IUnitOfWorkManager _unitOfWorkManager;
-    private readonly IAsyncQueryableExecuter _asyncQueryableExecuter =
-        NullAsyncQueryableExecuter.Instance;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NotificationStore"/> class.
@@ -45,8 +43,6 @@ public class NotificationStore : INotificationStore, ITransientDependency
         _userNotificationRepository = userNotificationRepository;
         _notificationSubscriptionRepository = notificationSubscriptionRepository;
         _unitOfWorkManager = unitOfWorkManager;
-
-        AsyncQueryableExecuter = NullAsyncQueryableExecuter.Instance;
     }
 
     public virtual async Task InsertSubscriptionAsync(NotificationSubscriptionInfo subscription)
@@ -674,7 +670,7 @@ public class NotificationStore : INotificationStore, ITransientDependency
 
                 query = query.PageBy(skipCount, maxResultCount);
 
-                var list = await _asyncQueryableExecuter.ToListAsync(query);
+                var list = await query.ToListAsync();
 
                 return list.Select(a => new UserNotificationInfoWithNotificationInfo(
                         a.userNotificationInfo,
@@ -784,7 +780,7 @@ public class NotificationStore : INotificationStore, ITransientDependency
                     where userNotificationInfo.Id == userNotificationId
                     select new { userNotificationInfo, tenantNotificationInfo };
 
-                var item = await _asyncQueryableExecuter.FirstOrDefaultAsync(query);
+                var item = await query.FirstOrDefaultAsync();
                 if (item == null)
                 {
                     return null;
@@ -902,19 +898,17 @@ public class NotificationStore : INotificationStore, ITransientDependency
 
                 var result = new List<GetNotificationsCreatedByUserOutput>();
 
-                var unPublishedNotifications = await AsyncQueryableExecuter.ToListAsync(
-                    queryForNotPublishedNotifications.Select(
-                        x => new GetNotificationsCreatedByUserOutput()
-                        {
-                            Data = x.Data,
-                            Severity = x.Severity,
-                            NotificationName = x.NotificationName,
-                            DataTypeName = x.DataTypeName,
-                            IsPublished = false,
-                            CreationTime = x.CreationTime,
-                        }
-                    )
-                );
+                var unPublishedNotifications = await queryForNotPublishedNotifications
+                    .Select(x => new GetNotificationsCreatedByUserOutput()
+                    {
+                        Data = x.Data,
+                        Severity = x.Severity,
+                        NotificationName = x.NotificationName,
+                        DataTypeName = x.DataTypeName,
+                        IsPublished = false,
+                        CreationTime = x.CreationTime,
+                    })
+                    .ToListAsync();
 
                 result.AddRange(unPublishedNotifications);
 
@@ -942,19 +936,17 @@ public class NotificationStore : INotificationStore, ITransientDependency
                     n => n.CreationTime
                 );
 
-                var publishedNotifications = await AsyncQueryableExecuter.ToListAsync(
-                    queryForPublishedNotifications.Select(
-                        x => new GetNotificationsCreatedByUserOutput()
-                        {
-                            Data = x.Data,
-                            Severity = x.Severity,
-                            NotificationName = x.NotificationName,
-                            DataTypeName = x.DataTypeName,
-                            IsPublished = true,
-                            CreationTime = x.CreationTime,
-                        }
-                    )
-                );
+                var publishedNotifications = await queryForPublishedNotifications
+                    .Select(x => new GetNotificationsCreatedByUserOutput()
+                    {
+                        Data = x.Data,
+                        Severity = x.Severity,
+                        NotificationName = x.NotificationName,
+                        DataTypeName = x.DataTypeName,
+                        IsPublished = true,
+                        CreationTime = x.CreationTime,
+                    })
+                    .ToListAsync();
 
                 result.AddRange(publishedNotifications);
                 return result;

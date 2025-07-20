@@ -1,12 +1,12 @@
 ﻿using Abp.NHibernate.EntityMappings;
 using Abp.Notifications;
 
-namespace CouponPaymentSystem.Database.Notifications;
+namespace CouponPaymentSystem.Core.Notifications;
 
-public class TenantNotificationInfoMap : EntityMap<TenantNotificationInfo, Guid>
+public class NotificationInfoMap : EntityMap<NotificationInfo, Guid>
 {
-    public TenantNotificationInfoMap()
-        : base(nameof(TenantNotificationInfo))
+    public NotificationInfoMap()
+        : base(nameof(NotificationInfo))
     {
         Map(x => x.Data).Length(NotificationInfo.MaxDataLength);
         Map(x => x.DataTypeName).Length(NotificationInfo.MaxDataTypeNameLength);
@@ -14,11 +14,13 @@ public class TenantNotificationInfoMap : EntityMap<TenantNotificationInfo, Guid>
         Map(x => x.EntityTypeAssemblyQualifiedName)
             .Length(NotificationInfo.MaxEntityTypeAssemblyQualifiedNameLength);
         Map(x => x.EntityTypeName).Length(NotificationInfo.MaxEntityTypeNameLength);
+        Map(x => x.ExcludedUserIds).Length(NotificationInfo.MaxUserIdsLength);
         Map(x => x.NotificationName)
             .Length(NotificationInfo.MaxNotificationNameLength)
             .Not.Nullable();
         Map(x => x.Severity).CustomType<NotificationSeverity>().Not.Nullable();
-        Map(x => x.TenantId);
+        Map(x => x.TenantIds).Length(NotificationInfo.MaxTenantIdsLength);
+        Map(x => x.UserIds).Length(NotificationInfo.MaxUserIdsLength);
 
         this.MapCreationAudited();
     }

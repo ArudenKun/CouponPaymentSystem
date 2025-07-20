@@ -1,11 +1,10 @@
 ﻿using System.Data.Common;
-using CouponPaymentSystem.Core.Authorization;
-using CouponPaymentSystem.Database.Common;
+using CouponPaymentSystem.Core.Common;
 using NHibernate;
 using NHibernate.Engine;
 using NHibernate.SqlTypes;
 
-namespace CouponPaymentSystem.Database.Authorization;
+namespace CouponPaymentSystem.Core.Authorization;
 
 public class DomainIdUserType : UserTypeBase
 {

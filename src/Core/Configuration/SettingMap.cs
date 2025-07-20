@@ -1,7 +1,6 @@
 ﻿using Abp.NHibernate.EntityMappings;
-using CouponPaymentSystem.Core.Configuration;
 
-namespace CouponPaymentSystem.Database.Configuration;
+namespace CouponPaymentSystem.Core.Configuration;
 
 public class SettingMap : EntityMap<Setting, long>
 {
@@ -11,7 +10,7 @@ public class SettingMap : EntityMap<Setting, long>
         Map(x => x.TenantId);
         Map(x => x.UserId);
         Map(x => x.Name).Length(Setting.MaxNameLength).Not.Nullable();
-        Map(x => x.Value).Length(DatabaseConstants.NvarcharMax);
+        Map(x => x.Value);
 
         this.MapAudited();
     }

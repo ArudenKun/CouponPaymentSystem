@@ -1,7 +1,7 @@
 ﻿using Abp.NHibernate.EntityMappings;
 using Abp.Notifications;
 
-namespace CouponPaymentSystem.Database.Notifications;
+namespace CouponPaymentSystem.Core.Notifications;
 
 public class NotificationSubscriptionInfoMap : EntityMap<NotificationSubscriptionInfo, Guid>
 {

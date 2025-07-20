@@ -1,8 +1,7 @@
 ﻿using Abp.NHibernate.EntityMappings;
-using CouponPaymentSystem.Core.Uploads;
-using CouponPaymentSystem.Database.Authorization;
+using CouponPaymentSystem.Core.Authorization;
 
-namespace CouponPaymentSystem.Database.Uploads;
+namespace CouponPaymentSystem.Core.Uploads;
 
 public class UploadMap : EntityMap<Upload>
 {
