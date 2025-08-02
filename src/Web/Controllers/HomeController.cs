@@ -1,4 +1,7 @@
 ﻿using System.Web.Mvc;
+using Abp.Extensions;
+using NHibernate;
+using NHibernate.Transaction;
 
 namespace CouponPaymentSystem.Controllers;
 
@@ -8,6 +11,8 @@ public class HomeController : CpsControllerBase
 
     public ActionResult Index()
     {
+        ISession session;
+        var a = session.GetCurrentTransaction().As<AdoTransaction>();
         return View();
     }
 
