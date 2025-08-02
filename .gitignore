@@ -1,5 +1,6 @@
 ﻿### Custom
 App_Data
+config.json
 
 ### VisualStudioCode template
 .vscode/*

@@ -24,9 +24,7 @@
     <None Include="Properties\launchSettings.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.BlobStoring.FileSystem" Version="9.4.2" />
     <PackageReference Include="Abp.Castle.Log4Net" Version="9.4.2" />
-    <PackageReference Include="Abp.HangFire" Version="9.4.2" />
     <PackageReference Include="Abp.Owin" Version="9.4.2" />
     <PackageReference Include="Abp.Web.Api" Version="9.4.2" />
     <PackageReference Include="Abp.Web.Mvc" Version="9.4.2" />
@@ -34,9 +32,12 @@
     <PackageReference Include="Abp.Web.SignalR" Version="9.4.2" />
     <PackageReference Include="BundleTransformer.NUglify" Version="1.15.4" />
     <PackageReference Include="Hangfire.AspNet" Version="0.3.0" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.8.20" />
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.3" />
+    <PackageReference
+      Include="Microsoft.ReportingServices.ReportViewerControl.WebForms"
+      Version="150.1652.0"
+    />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\css\" />
@@ -44,8 +45,6 @@
     <Folder Include="Content\lib\jquery\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\DistributedLock.SystemSqlServer\DistributedLock.SystemSqlServer.csproj" />
-    <ProjectReference Include="..\Application\Application.csproj" />
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 </Project>

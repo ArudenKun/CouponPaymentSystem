@@ -1,9 +1,9 @@
 ﻿using Abp.Application.Services;
-using CouponPaymentSystem.Core.Configuration.Options;
+using CouponPaymentSystem.Application.Common.Configurations;
 
 namespace CouponPaymentSystem.Application;
 
 public abstract class CpsAppServiceBase : ApplicationService
 {
-    public required CpsOptions CpsOptions { get; init; }
+    public required IApplicationSettings Settings { get; init; }
 }

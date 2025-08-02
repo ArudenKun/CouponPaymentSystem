@@ -1,35 +1,37 @@
-﻿using Abp.AutoMapper;
-using Abp.BlobStoring;
+﻿using System.Reflection;
+using Abp.AutoMapper;
 using Abp.FluentValidation;
 using Abp.Modules;
-using CouponPaymentSystem.Core;
-using CouponPaymentSystem.Core.Common.Extensions;
-using Humanizer;
+using CouponPaymentSystem.Application.Authorization;
+using CouponPaymentSystem.Application.Common.Extensions;
+using CouponPaymentSystem.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Sqids;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace CouponPaymentSystem.Application;
 
-[DependsOn(
-    typeof(CpsCoreModule),
-    typeof(AbpAutoMapperModule),
-    typeof(AbpFluentValidationModule),
-    typeof(AbpBlobStoringModule)
-)]
+[DependsOn(typeof(CpsDomainModule), typeof(AbpAutoMapperModule), typeof(AbpFluentValidationModule))]
 public class CpsApplicationModule : AbpModule
 {
+    private static readonly Assembly ThisAssembly = typeof(CpsApplicationModule).Assembly;
+
+    public override void PreInitialize()
+    {
+        Configuration.Authorization.Providers.Add<AuthorizationProvider>();
+    }
+
     public override void Initialize()
     {
-        var thisAssembly = typeof(CpsApplicationModule).Assembly;
-        IocManager.RegisterAssemblyByConvention(thisAssembly);
-        IocManager.Register();
-        IocManager.WithServiceCollection(services =>
+        IocManager.RegisterAssemblyByConvention(ThisAssembly);
+        IocManager.RegisterWithServiceCollection(services =>
             services
+                .AddMediator(options =>
+                {
+                    options.GenerateTypesAsInternal = true;
+                    options.ServiceLifetime = ServiceLifetime.Transient;
+                })
                 .AddSingleton(new SqidsEncoder(new SqidsOptions { MinLength = 8 }))
-                .AddFusionCache()
-                .WithDefaultEntryOptions(options => options.SetDuration(30.Minutes()))
         );
-        Configuration.Modules.AbpAutoMapper().Configurators.Add(cfg => cfg.AddMaps(thisAssembly));
+        Configuration.Modules.AbpAutoMapper().Configurators.Add(cfg => cfg.AddMaps(ThisAssembly));
     }
 }

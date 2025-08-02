@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using CouponPaymentSystem.Application.UploadTransactions;
 
 namespace CouponPaymentSystem.Controllers;
 
@@ -9,11 +8,6 @@ public class HomeController : CpsControllerBase
 
     public ActionResult Index()
     {
-        if (CpsOptions is not null)
-        {
-            Logger.Info($"Testing: {CpsOptions.Checker}");
-        }
-
         return View();
     }
 

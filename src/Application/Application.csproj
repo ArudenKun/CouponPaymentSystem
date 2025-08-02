@@ -6,23 +6,26 @@
   <ItemGroup>
     <PackageReference Include="Abp.BlobStoring" Version="9.4.2" />
     <PackageReference Include="Abp.FluentValidation" Version="9.4.2" />
-    <PackageReference Include="Aoxe.Cryptography" Version="2025.4.0" />
-    <PackageReference Include="Aoxe.SystemIoCompression" Version="2025.2.0" />
-    <PackageReference Include="Immutype" Version="1.0.16">
+    <PackageReference Include="Abp.NHibernate" Version="9.4.2" />
+    <PackageReference Include="DistributedLock.Core" Version="1.0.8" />
+    <PackageReference Include="FlatFiles" Version="5.0.4" />
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
+    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.65">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Sqids" Version="3.1.0" />
     <PackageReference Include="Sylvan.Data" Version="0.2.16" />
-    <PackageReference Include="Sylvan.Data.Excel" Version="0.4.27" />
+    <PackageReference Include="Sylvan.Data.Csv" Version="1.4.2" />
+    <PackageReference Include="Sylvan.Data.Excel" Version="0.4.29" />
     <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Abp.AutoMapper\Abp.AutoMapper.csproj" />
-    <ProjectReference Include="..\..\lib\DistributedLock.Core\DistributedLock.Core.csproj" />
-    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Authorization\" />
+    <Folder Include="Features\Uploads\Commands\" />
+    <Folder Include="Features\Uploads\Queries\" />
   </ItemGroup>
 </Project>
