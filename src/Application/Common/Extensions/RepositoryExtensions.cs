@@ -48,14 +48,14 @@ public static class RepositoryExtensions
         // Create command
         var insertEntitiesCmd = Activator.CreateInstance(sqlCommandType);
         var transaction = session.GetCurrentTransaction();
-        if (transaction != null && transaction.IsActive)
+        if (transaction is { IsActive: true })
         {
             // Get Enlist method via reflection
             var enlistMethod = transaction.GetType().GetMethod("Enlist");
             enlistMethod?.Invoke(transaction, [insertEntitiesCmd]);
         }
 
-        var entityTable = GenerateDataTable<TEntity, TPrimaryKey>(session, entities, classMapping);
+        var entityTable = GenerateDataTable<TEntity, TPrimaryKey>(entities, classMapping);
 
         // Create SqlBulkCopy with options
         var checkConstraints = Enum.Parse(sqlBulkCopyOptionsType, "CheckConstraints");
@@ -108,100 +108,130 @@ public static class RepositoryExtensions
 
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     private static DataTable GenerateDataTable<TEntity, TPrimaryKey>(
-        ISession session,
         IEnumerable<TEntity> entities,
         SingleTableEntityPersister classMapping
     )
         where TEntity : class, IEntity<TPrimaryKey>
     {
-        var generator = classMapping.IdentifierGenerator;
-
         var entityTable = new DataTable();
         var propertyNames = classMapping.PropertyNames;
+        var addedColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase); // Track added columns
 
+        // Handle identifier column
         var identifierColumnNames = classMapping.IdentifierColumnNames.FirstOrDefault();
-        if (identifierColumnNames != null)
+        if (!string.IsNullOrEmpty(identifierColumnNames))
         {
-            entityTable.Columns.Add(identifierColumnNames, typeof(long));
+            if (!addedColumns.Contains(identifierColumnNames))
+            {
+                entityTable.Columns.Add(identifierColumnNames, typeof(TPrimaryKey));
+                addedColumns.Add(identifierColumnNames);
+            }
         }
 
-        var persistedProperties = propertyNames
-            .Select(propertyName =>
+        // Process properties
+        var persistedProperties = new List<PropertyMappingInfo>();
+        foreach (var propertyName in propertyNames)
+        {
+            var propertyType = classMapping.GetPropertyType(propertyName);
+
+            // Skip collections
+            if (propertyType.IsCollectionType)
             {
-                var propertyType = classMapping.GetPropertyType(propertyName);
-                if (propertyType.IsCollectionType)
-                {
-                    return null;
-                }
+                continue;
+            }
 
-                var type = propertyType.ReturnedClass;
-                if (propertyType.IsEntityType)
-                {
-                    type = typeof(long);
-                }
+            // Get column name
+            var columnNames = classMapping.GetPropertyColumnNames(propertyName);
+            var columnName = columnNames?.FirstOrDefault();
+            if (string.IsNullOrEmpty(columnName))
+            {
+                continue;
+            }
 
-                var columnName = classMapping.GetPropertyColumnNames(propertyName).FirstOrDefault();
-                if (columnName == null)
-                {
-                    return null;
-                }
+            // Skip duplicate columns
+            if (addedColumns.Contains(columnName ?? string.Empty))
+            {
+                continue;
+            }
 
-                entityTable.Columns.Add(columnName, type);
+            // Determine type
+            Type type = propertyType.ReturnedClass;
+            bool isEntity = false;
 
-                return new
+            if (propertyType.IsEntityType)
+            {
+                type = typeof(TPrimaryKey);
+                isEntity = true;
+            }
+
+            // Add column
+            entityTable.Columns.Add(columnName, type);
+            addedColumns.Add(columnName);
+
+            persistedProperties.Add(
+                new PropertyMappingInfo
                 {
                     ColumnName = columnName,
                     PropertyName = propertyName,
-                    propertyType.ReturnedClass.IsEnum,
+                    IsEnum = propertyType.ReturnedClass.IsEnum,
                     Type = propertyType.ReturnedClass,
-                };
-            })
-            .Where(x => x != null);
+                    IsEntity = isEntity,
+                }
+            );
+        }
 
+        // Track unique rows if needed (using primary key)
+        var uniqueRows = new HashSet<TPrimaryKey>();
+
+        // Process entities
         foreach (var entity in entities)
         {
-            var row = entityTable.NewRow();
+            if (entity == null)
+                continue;
 
-            if (identifierColumnNames != null)
+            // Check for duplicate entities (optional)
+            if (uniqueRows.Contains(entity.Id))
             {
-                if (typeof(TPrimaryKey) == typeof(long) || typeof(TPrimaryKey) == typeof(int))
-                {
-                    var value = (TPrimaryKey)
-                        generator.Generate(session.GetSessionImplementation(), null);
-                    row[identifierColumnNames] = value;
-                    entity.Id = value;
-                }
+                continue; // Skip duplicate entities
             }
 
-            foreach (var persistedProperty in persistedProperties)
-            {
-                var columnName = persistedProperty?.ColumnName;
-                if (columnName != null)
-                {
-                    object value = classMapping.GetPropertyValue(
-                        entity,
-                        persistedProperty?.PropertyName
-                    );
+            uniqueRows.Add(entity.Id);
 
-                    if (value == null)
+            var row = entityTable.NewRow();
+
+            // Set ID
+            if (!string.IsNullOrEmpty(identifierColumnNames))
+            {
+                row[identifierColumnNames] = entity.Id ?? (object)DBNull.Value;
+            }
+
+            // Set property values
+            foreach (var property in persistedProperties)
+            {
+                object value = classMapping.GetPropertyValue(entity, property.PropertyName);
+
+                if (value == null)
+                {
+                    row[property.ColumnName] = DBNull.Value;
+                }
+                else if (property.IsEnum)
+                {
+                    row[property.ColumnName] = Enum.GetName(property.Type, value);
+                }
+                else if (property.IsEntity)
+                {
+                    if (value is IEntity<TPrimaryKey> entityValue)
                     {
-                        row[columnName] = DBNull.Value;
+                        row[property.ColumnName] = entityValue.Id;
                     }
                     else
                     {
-                        if (persistedProperty is { IsEnum: true })
-                        {
-                            row[columnName] = Enum.GetName(persistedProperty.Type, value);
-                        }
-                        else if (value is IEntity)
-                        {
-                            row[columnName] = (value as IEntity)?.Id;
-                        }
-                        else
-                        {
-                            row[columnName] = value;
-                        }
+                        row[property.ColumnName] = DBNull.Value;
                     }
+                }
+                else
+                {
+                    row[property.ColumnName] = Convert.ChangeType(value, property.Type);
                 }
             }
 
@@ -245,4 +275,13 @@ public static class RepositoryExtensions
     //                 | BindingFlags.Static
     //         )
     //         ?.GetValue(instance);
+
+    private class PropertyMappingInfo
+    {
+        public required string ColumnName { get; init; }
+        public required string PropertyName { get; init; }
+        public required bool IsEnum { get; init; }
+        public required Type Type { get; init; }
+        public required bool IsEntity { get; init; }
+    }
 }
