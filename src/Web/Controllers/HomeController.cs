@@ -11,8 +11,6 @@ public class HomeController : CpsControllerBase
 
     public ActionResult Index()
     {
-        ISession session;
-        var a = session.GetCurrentTransaction().As<AdoTransaction>();
         return View();
     }
 
