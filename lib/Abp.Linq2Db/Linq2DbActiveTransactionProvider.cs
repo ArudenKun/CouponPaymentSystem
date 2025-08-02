@@ -42,25 +42,20 @@ public class Linq2DbActiveTransactionProvider : IActiveTransactionProvider, ITra
             (Type)args["ContextType"]
         );
 
-        using (
-            var dbContextProviderWrapper = _iocResolver.ResolveAsDisposable(dbContextProviderType)
-        )
-        {
-            var method = dbContextProviderWrapper
-                .Object.GetType()
-                .GetMethod(
-                    nameof(IDbContextProvider<>.GetDbContextAsync),
-                    [typeof(MultiTenancySides)]
-                );
+        using var dbContextProviderWrapper = _iocResolver.ResolveAsDisposable(
+            dbContextProviderType
+        );
+        var method = dbContextProviderWrapper
+            .Object.GetType()
+            .GetMethod(nameof(IDbContextProvider<>.GetDbContextAsync), [typeof(MultiTenancySides)]);
 
-            var result = await ReflectionHelper.InvokeAsync(
-                method,
-                dbContextProviderWrapper.Object,
-                (MultiTenancySides?)args["MultiTenancySide"]
-            );
+        var result = await ReflectionHelper.InvokeAsync(
+            method!,
+            dbContextProviderWrapper.Object,
+            (MultiTenancySides?)args["MultiTenancySide"]
+        );
 
-            return (DataConnection)result;
-        }
+        return (DataConnection)result;
     }
 
     private DataConnection GetDbContext(ActiveTransactionProviderArgs args)
@@ -69,22 +64,17 @@ public class Linq2DbActiveTransactionProvider : IActiveTransactionProvider, ITra
             (Type)args["ContextType"]
         );
 
-        using (
-            var dbContextProviderWrapper = _iocResolver.ResolveAsDisposable(dbContextProviderType)
-        )
-        {
-            var method = dbContextProviderWrapper
-                .Object.GetType()
-                .GetMethod(
-                    nameof(IDbContextProvider<AbpDbContext>.GetDbContext),
-                    [typeof(MultiTenancySides)]
-                );
+        using var dbContextProviderWrapper = _iocResolver.ResolveAsDisposable(
+            dbContextProviderType
+        );
+        var method = dbContextProviderWrapper
+            .Object.GetType()
+            .GetMethod(nameof(IDbContextProvider<>.GetDbContext), [typeof(MultiTenancySides)]);
 
-            return (DataConnection)
-                method.Invoke(
-                    dbContextProviderWrapper.Object,
-                    [(MultiTenancySides?)args["MultiTenancySide"]]
-                );
-        }
+        return (DataConnection)
+            method!.Invoke(
+                dbContextProviderWrapper.Object,
+                [(MultiTenancySides?)args["MultiTenancySide"]]
+            );
     }
 }
