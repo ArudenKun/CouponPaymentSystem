@@ -6,7 +6,6 @@
   <ItemGroup>
     <PackageReference Include="Abp.BlobStoring" Version="9.4.2" />
     <PackageReference Include="Abp.FluentValidation" Version="9.4.2" />
-    <PackageReference Include="Abp.NHibernate" Version="9.4.2" />
     <PackageReference Include="DistributedLock.Core" Version="1.0.8" />
     <PackageReference Include="FlatFiles" Version="5.0.4" />
     <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
@@ -22,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Abp.AutoMapper\Abp.AutoMapper.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.NHibernate\Abp.NHibernate.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
