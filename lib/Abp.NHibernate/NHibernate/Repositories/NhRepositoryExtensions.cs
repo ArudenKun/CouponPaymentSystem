@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Abp.Collections.Extensions;
 using Abp.Dependency;
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
@@ -8,6 +9,7 @@ using Abp.Reflection;
 using Abp.Runtime.Session;
 using NHibernate;
 using NHibernate.Linq;
+using NHibernate.Persister.Entity;
 
 namespace Abp.NHibernate.Repositories;
 
@@ -32,27 +34,33 @@ public static class NhRepositoryExtensions
     public static async Task BatchInsertAsync<TEntity, TPrimaryKey>(
         this IRepository<TEntity, TPrimaryKey> repository,
         IEnumerable<TEntity> entities,
-        int batchSize = 100
+        int batchSize = 500
     )
         where TEntity : Entity<TPrimaryKey>
     {
         Check.NotNull(repository, nameof(repository));
 
         var session = repository.GetSession();
-        var entitiesArray = entities.ToArray();
-        var totalCount = entitiesArray.Length;
+
+        var entityList = entities.AsList();
+        if (entityList.Count == 0)
+            return;
+
+        var totalCount = entityList.Count;
         var processed = 0;
 
         while (processed < totalCount)
         {
             var currentBatchSize = Math.Min(batchSize, totalCount - processed);
-            for (var i = processed; i < processed + currentBatchSize; i++)
+            for (var i = 0; i < currentBatchSize; i++)
             {
-                await repository.InsertAsync(entitiesArray[i]);
+                var entity = entityList[processed + i];
+                await repository.InsertAsync(entity);
             }
 
             await session.FlushAsync();
             session.Clear();
+
             processed += currentBatchSize;
         }
     }
@@ -79,7 +87,9 @@ public static class NhRepositoryExtensions
             var abpFilterExpression = GetFilterExpressionOrNull<TEntity, TPrimaryKey>(
                 repository.GetIocResolver()
             );
+#pragma warning disable CS8604 // Possible null reference argument.
             var filterExpression = ExpressionCombiner.Combine(predicate, abpFilterExpression);
+#pragma warning restore CS8604 // Possible null reference argument.
 
             return await query.Where(filterExpression).DeleteAsync();
         });
@@ -98,6 +108,7 @@ public static class NhRepositoryExtensions
         if (typeof(ISoftDelete).IsAssignableFrom(typeof(TEntity)))
         {
             var isSoftDeleteFilterEnabled =
+                // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
                 currentUnitOfWorkProvider.Current?.IsFilterEnabled(AbpDataFilters.SoftDelete)
                 == true;
             if (isSoftDeleteFilterEnabled)
@@ -146,18 +157,17 @@ public static class NhRepositoryExtensions
         return expression;
     }
 
-    private static int? GetCurrentTenantIdOrNull(IIocResolver iocResolver)
+    private static Guid? GetCurrentTenantIdOrNull(IIocResolver iocResolver)
     {
-        using (var scope = iocResolver.CreateScope())
+        IEntityPersister entityPersister;
+        using var scope = iocResolver.CreateScope();
+        var currentUnitOfWorkProvider = scope.Resolve<ICurrentUnitOfWorkProvider>();
+
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        if (currentUnitOfWorkProvider?.Current != null)
         {
-            var currentUnitOfWorkProvider = scope.Resolve<ICurrentUnitOfWorkProvider>();
-
-            if (currentUnitOfWorkProvider?.Current != null)
-            {
-                return currentUnitOfWorkProvider.Current.GetTenantId();
-            }
-
-            return iocResolver.Resolve<IAbpSession>().TenantId;
+            return currentUnitOfWorkProvider.Current.GetTenantId();
         }
+        return iocResolver.Resolve<IAbpSession>().TenantId;
     }
 }

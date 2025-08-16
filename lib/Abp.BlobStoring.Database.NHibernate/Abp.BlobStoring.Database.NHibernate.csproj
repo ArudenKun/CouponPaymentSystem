@@ -3,9 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.NHibernate" Version="9.4.2" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Abp.BlobStoring.Database\Abp.BlobStoring.Database.csproj" />
+    <ProjectReference Include="..\Abp.NHibernate\Abp.NHibernate.csproj" />
   </ItemGroup>
 </Project>

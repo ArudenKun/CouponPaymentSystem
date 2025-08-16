@@ -31,17 +31,19 @@ public class ScopedWindsorServiceProvider
         OwnMsLifetimeScope = msLifetimeScopeProvider.LifetimeScope;
     }
 
-    public object GetService(Type serviceType)
+    public object? GetService(Type serviceType)
     {
         return GetServiceInternal(serviceType, true);
     }
 
     public object GetRequiredService(Type serviceType)
     {
+#pragma warning disable CS8603 // Possible null reference return.
         return GetServiceInternal(serviceType, false);
+#pragma warning restore CS8603 // Possible null reference return.
     }
 
-    private object GetServiceInternal(Type serviceType, bool isOptional)
+    private object? GetServiceInternal(Type serviceType, bool isOptional)
     {
         using (MsLifetimeScope.Using(OwnMsLifetimeScope))
         {
@@ -52,7 +54,7 @@ public class ScopedWindsorServiceProvider
                 IsInResolving = true;
             }
 
-            object instance = null;
+            object? instance = null;
             try
             {
                 return instance = ResolveInstanceOrNull(serviceType, isOptional);
@@ -72,7 +74,7 @@ public class ScopedWindsorServiceProvider
         }
     }
 
-    private object ResolveInstanceOrNull(Type serviceType, bool isOptional)
+    private object? ResolveInstanceOrNull(Type serviceType, bool isOptional)
     {
         //Check if given service is directly registered
         if (_container.Kernel.HasComponent(serviceType))

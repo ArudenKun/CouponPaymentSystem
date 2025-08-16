@@ -14,7 +14,4 @@ public interface IApplicationSettings
     IDatabaseSettings Aso { get; init; }
     IDatabaseSettings Cps { get; init; }
     IGefuSettings Gefu { get; init; }
-
-    bool Load();
-    void Save();
 }

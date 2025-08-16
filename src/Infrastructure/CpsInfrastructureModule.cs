@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Data.SqlClient;
+using System.Reflection;
 using Abp.BlobStoring.Database.NHibernate;
 using Abp.Configuration.Startup;
 using Abp.Hangfire;
 using Abp.Hangfire.Configuration;
 using Abp.Modules;
 using Abp.NHibernate;
+using AsyncKeyedLock;
 using Castle.MicroKernel.Registration;
 using CouponPaymentSystem.Application;
 using CouponPaymentSystem.Application.Common;
@@ -17,9 +19,6 @@ using FluentNHibernate.Cfg.Db;
 using Hangfire;
 using Hangfire.SqlServer;
 using Humanizer;
-using Medallion.Threading;
-using Medallion.Threading.SqlServer;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Driver;
 using NHibernate.Tool.hbm2ddl;
@@ -80,18 +79,8 @@ public class CpsInfrastructureModule : AbpModule
         IocManager.RegisterAssemblyByConvention(ThisAssembly);
         IocManager.IocContainer.Register(
             Component
-                .For<
-                    IDistributedLockProvider,
-                    IDistributedUpgradeableReaderWriterLock,
-                    IDistributedSemaphore
-                >()
-                .ImplementedBy<SqlDistributedSynchronizationProvider>()
-                .DependsOn(
-                    Dependency.OnValue(
-                        "connectionString",
-                        Configuration.DefaultNameOrConnectionString
-                    )
-                )
+                .For<AsyncKeyedLocker<string>>()
+                .ImplementedBy<AsyncKeyedLocker<string>>()
                 .LifestyleSingleton(),
             Component
                 .For<IDbConnectionFactory<SqlConnection>>()

@@ -1,16 +1,20 @@
 ﻿using System.Reflection;
-using Abp.AutoMapper;
+using Abp.Configuration.Startup;
+using Abp.Dependency;
 using Abp.FluentValidation;
 using Abp.Modules;
+using Abp.ObjectMapping;
 using CouponPaymentSystem.Application.Authorization;
 using CouponPaymentSystem.Application.Common.Extensions;
+using CouponPaymentSystem.Application.Common.Mapping;
+using CouponPaymentSystem.Application.Features.Uploads;
 using CouponPaymentSystem.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Sqids;
 
 namespace CouponPaymentSystem.Application;
 
-[DependsOn(typeof(CpsDomainModule), typeof(AbpAutoMapperModule), typeof(AbpFluentValidationModule))]
+[DependsOn(typeof(CpsDomainModule), typeof(AbpFluentValidationModule))]
 public class CpsApplicationModule : AbpModule
 {
     private static readonly Assembly ThisAssembly = typeof(CpsApplicationModule).Assembly;
@@ -18,6 +22,7 @@ public class CpsApplicationModule : AbpModule
     public override void PreInitialize()
     {
         Configuration.Authorization.Providers.Add<AuthorizationProvider>();
+        Configuration.ReplaceService<IObjectMapper, FacetObjectMapper>();
     }
 
     public override void Initialize()
@@ -32,6 +37,5 @@ public class CpsApplicationModule : AbpModule
                 })
                 .AddSingleton(new SqidsEncoder(new SqidsOptions { MinLength = 8 }))
         );
-        Configuration.Modules.AbpAutoMapper().Configurators.Add(cfg => cfg.AddMaps(ThisAssembly));
     }
 }

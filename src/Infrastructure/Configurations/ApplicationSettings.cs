@@ -1,17 +1,11 @@
-﻿using Abp;
-using Cogwheel;
-using CouponPaymentSystem.Application.Common;
-using CouponPaymentSystem.Application.Common.Configurations;
+﻿using CouponPaymentSystem.Application.Common.Configurations;
 using CouponPaymentSystem.Application.Common.Extensions;
 using Humanizer;
 
 namespace CouponPaymentSystem.Infrastructure.Configurations;
 
-internal sealed class ApplicationSettings : SettingsBase, IApplicationSettings, IShouldInitialize
+internal sealed class ApplicationSettings : IApplicationSettings
 {
-    public ApplicationSettings(IPathManager pathManager)
-        : base(pathManager.ConfigPath) { }
-
     public string SysId
     {
         get;
@@ -40,7 +34,7 @@ internal sealed class ApplicationSettings : SettingsBase, IApplicationSettings, 
     IDatabaseSettings IApplicationSettings.Aso
     {
         get => Aso;
-        init { }
+        init => Aso = (DatabaseSettings)value;
     }
 
     public DatabaseSettings Cps { get; init; } =
@@ -56,7 +50,7 @@ internal sealed class ApplicationSettings : SettingsBase, IApplicationSettings, 
     IDatabaseSettings IApplicationSettings.Cps
     {
         get => Cps;
-        init { }
+        init => Cps = (DatabaseSettings)value;
     }
 
     public GefuSettings Gefu { get; init; } = new();
@@ -64,11 +58,6 @@ internal sealed class ApplicationSettings : SettingsBase, IApplicationSettings, 
     IGefuSettings IApplicationSettings.Gefu
     {
         get => Gefu;
-        init { }
-    }
-
-    public void Initialize()
-    {
-        Load();
+        init => Gefu = (GefuSettings)value;
     }
 }

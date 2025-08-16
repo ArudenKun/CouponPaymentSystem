@@ -1,31 +1,57 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>CouponPaymentSystem.Application</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.BlobStoring" Version="9.4.2" />
-    <PackageReference Include="Abp.FluentValidation" Version="9.4.2" />
-    <PackageReference Include="DistributedLock.Core" Version="1.0.8" />
-    <PackageReference Include="FlatFiles" Version="5.0.4" />
-    <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
-    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.65">
+    <PackageReference Include="Abp.BlobStoring" />
+    <PackageReference Include="Abp.FluentValidation" />
+    <PackageReference Include="CSharpier.MsBuild">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Sqids" Version="3.1.0" />
-    <PackageReference Include="Sylvan.Data" Version="0.2.16" />
-    <PackageReference Include="Sylvan.Data.Csv" Version="1.4.2" />
-    <PackageReference Include="Sylvan.Data.Excel" Version="0.4.29" />
-    <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.3.0" />
+    <PackageReference Include="CsvHelper" />
+    <PackageReference Include="Facet" />
+    <PackageReference Include="FlatFiles" />
+    <PackageReference Include="Mediator.Abstractions" />
+    <PackageReference Include="Mediator.SourceGenerator">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Polyfill">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ServiceScan.SourceGenerator">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Sqids" />
+    <PackageReference Include="Sylvan.Data" />
+    <PackageReference Include="Sylvan.Data.Excel" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\Abp.AutoMapper\Abp.AutoMapper.csproj" />
     <ProjectReference Include="..\..\lib\Abp.NHibernate\Abp.NHibernate.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Features\Uploads\Commands\" />
     <Folder Include="Features\UploadTransactions\" />
   </ItemGroup>
+  <Target Name="Mapster" AfterTargets="AfterBuild">
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
+    <Exec
+      WorkingDirectory="$(ProjectDir)"
+      Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot;"
+    />
+    <Exec
+      WorkingDirectory="$(ProjectDir)"
+      Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot;"
+    />
+    <Exec
+      WorkingDirectory="$(ProjectDir)"
+      Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot;"
+    />
+  </Target>
 </Project>

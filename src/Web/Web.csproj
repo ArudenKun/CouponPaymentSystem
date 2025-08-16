@@ -1,11 +1,11 @@
-﻿<Project Sdk="MSBuild.SDK.SystemWeb/4.0.104">
+<Project Sdk="MSBuild.SDK.SystemWeb/4.0.104">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <RootNamespace>CouponPaymentSystem</RootNamespace>
     <UsingMSBuildSDKSystemWeb>true</UsingMSBuildSDKSystemWeb>
     <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
-    <MicrosoftNetCompilersToolset_Version>4.14.0</MicrosoftNetCompilersToolset_Version>
-    <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
+    <!--    <MicrosoftNetCompilersToolset_Version>4.14.0</MicrosoftNetCompilersToolset_Version>-->
+    <!--    <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>-->
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="Global.asax.cs">
@@ -24,20 +24,25 @@
     <None Include="Properties\launchSettings.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.Castle.Log4Net" Version="9.4.2" />
-    <PackageReference Include="Abp.Owin" Version="9.4.2" />
-    <PackageReference Include="Abp.Web.Api" Version="9.4.2" />
-    <PackageReference Include="Abp.Web.Mvc" Version="9.4.2" />
-    <PackageReference Include="Abp.Web.Resources" Version="9.4.2" />
-    <PackageReference Include="Abp.Web.SignalR" Version="9.4.2" />
-    <PackageReference Include="BundleTransformer.NUglify" Version="1.15.4" />
-    <PackageReference Include="Hangfire.AspNet" Version="0.3.0" />
-    <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
-    <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.3" />
-    <PackageReference
-      Include="Microsoft.ReportingServices.ReportViewerControl.WebForms"
-      Version="150.1652.0"
-    />
+    <PackageReference Include="Abp.Castle.Log4Net" />
+    <PackageReference Include="Abp.Owin" />
+    <PackageReference Include="Abp.Web.Api" />
+    <PackageReference Include="Abp.Web.Mvc" />
+    <PackageReference Include="Abp.Web.Resources" />
+    <PackageReference Include="Abp.Web.SignalR" />
+    <PackageReference Include="BundleTransformer.NUglify" />
+    <PackageReference Include="CSharpier.MsBuild">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Hangfire.AspNet" />
+    <PackageReference Include="Microsoft.AspNet.SignalR" />
+    <PackageReference Include="Microsoft.Owin.Security.Cookies" />
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms" />
+    <PackageReference Include="Polyfill">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\css\" />

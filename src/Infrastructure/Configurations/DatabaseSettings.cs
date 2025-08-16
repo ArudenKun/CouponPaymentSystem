@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using CouponPaymentSystem.Application.Common.Configurations;
-using Microsoft.Data.SqlClient;
 
 namespace CouponPaymentSystem.Infrastructure.Configurations;
 

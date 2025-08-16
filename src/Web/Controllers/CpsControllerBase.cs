@@ -1,9 +1,10 @@
-﻿using Abp.Web.Mvc.Controllers;
+﻿using System.Web.Mvc;
+using Abp.Web.Mvc.Controllers;
 using CouponPaymentSystem.Application.Common.Configurations;
 
 namespace CouponPaymentSystem.Controllers;
 
-// [Authorize]
+[Authorize]
 public abstract class CpsControllerBase : AbpController
 {
     public required IApplicationSettings Settings { protected get; init; }

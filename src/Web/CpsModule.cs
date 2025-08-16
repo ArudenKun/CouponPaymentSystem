@@ -13,7 +13,6 @@ using Abp.Web.SignalR;
 using Abp.WebApi;
 using Castle.MicroKernel.Registration;
 using CouponPaymentSystem.Application;
-using CouponPaymentSystem.Application.Common.Configurations;
 using CouponPaymentSystem.Application.Common.Extensions;
 using CouponPaymentSystem.Infrastructure;
 using Microsoft.Owin.Security;
@@ -31,8 +30,6 @@ namespace CouponPaymentSystem;
 public class CpsModule : AbpModule
 {
     private static readonly Assembly ThisAssembly = typeof(CpsModule).Assembly;
-
-    public override void PreInitialize() { }
 
     public override void Initialize()
     {
@@ -52,11 +49,6 @@ public class CpsModule : AbpModule
         AreaRegistration.RegisterAllAreas();
         ConfigureRoutes(RouteTable.Routes);
         ConfigureBundles(BundleTable.Bundles);
-    }
-
-    public override void Shutdown()
-    {
-        IocManager.Resolve<IApplicationSettings>().Save();
     }
 
     private static void ConfigureRoutes(RouteCollection routes)
@@ -82,6 +74,6 @@ public class CpsModule : AbpModule
 
     private static void ConfigureBundles(BundleCollection bundles)
     {
-        // bundles.Add(new CustomScriptBundle(""));
+        // Needed
     }
 }
