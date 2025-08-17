@@ -19,6 +19,7 @@ using FluentNHibernate.Cfg.Db;
 using Hangfire;
 using Hangfire.SqlServer;
 using Humanizer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NHibernate.Driver;
 using NHibernate.Tool.hbm2ddl;
@@ -38,8 +39,18 @@ public class CpsInfrastructureModule : AbpModule
 
     public override void PreInitialize()
     {
-        IocManager.Register<IApplicationSettings, ApplicationSettings>();
         IocManager.Register<IPathManager, PathManager>();
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("config.json", false, false)
+            .SetBasePath(IocManager.Resolve<IPathManager>().ConfigPath)
+            .Build();
+
+        IocManager.Register(
+            Component.For<IConfiguration>().Instance(configuration).LifestyleSingleton()
+        );
+        IocManager.RegisterWithServiceCollection(services =>
+            services.Configure<ApplicationSettings>(configuration)
+        );
         Configuration.DefaultNameOrConnectionString = IocManager
             .Resolve<IApplicationSettings>()
             .Cps.ConnectionString;
@@ -94,10 +105,6 @@ public class CpsInfrastructureModule : AbpModule
                 )
                 .LifestyleSingleton()
         );
-        IocManager.RegisterWithServiceCollection(services =>
-            services
-                .AddFusionCache()
-                .WithDefaultEntryOptions(options => options.SetDuration(30.Minutes()))
-        );
+        IocManager.RegisterWithServiceCollection(services => services.AddFusionCache());
     }
 }

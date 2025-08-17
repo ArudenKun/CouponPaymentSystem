@@ -4,54 +4,30 @@
     <RootNamespace>CouponPaymentSystem.Application</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.BlobStoring" />
-    <PackageReference Include="Abp.FluentValidation" />
-    <PackageReference Include="CSharpier.MsBuild">
+    <PackageReference Include="CsvHelper" Version="33.1.0" />
+    <PackageReference Include="Facet" Version="2.0.1" />
+    <PackageReference Include="FlatFiles" Version="5.0.4" />
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" />
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="CsvHelper" />
-    <PackageReference Include="Facet" />
-    <PackageReference Include="FlatFiles" />
-    <PackageReference Include="Mediator.Abstractions" />
-    <PackageReference Include="Mediator.SourceGenerator">
+    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.2.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Polyfill">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="ServiceScan.SourceGenerator">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Sqids" />
-    <PackageReference Include="Sylvan.Data" />
-    <PackageReference Include="Sylvan.Data.Excel" />
-    <PackageReference Include="System.Threading.Tasks.Dataflow" />
-    <PackageReference Include="ZiggyCreatures.FusionCache" />
+    <PackageReference Include="Sqids" Version="3.1.0" />
+    <PackageReference Include="Sylvan.Data" Version="0.2.16" />
+    <PackageReference Include="Sylvan.Data.Excel" Version="0.4.29" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="9.0.8" />
+    <PackageReference Include="ZiggyCreatures.FusionCache" Version="2.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Abp.BlobStoring\Abp.BlobStoring.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.FluentValidation\Abp.FluentValidation.csproj" />
     <ProjectReference Include="..\..\lib\Abp.NHibernate\Abp.NHibernate.csproj" />
+    <ProjectReference Include="..\..\lib\Castle.Windsor.Microsoft.Extensions.DependencyInjection\Castle.Windsor.Microsoft.Extensions.DependencyInjection.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Features\UploadTransactions\" />
-  </ItemGroup>
-  <Target Name="Mapster" AfterTargets="AfterBuild">
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
-    <Exec
-      WorkingDirectory="$(ProjectDir)"
-      Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot;"
-    />
-    <Exec
-      WorkingDirectory="$(ProjectDir)"
-      Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot;"
-    />
-    <Exec
-      WorkingDirectory="$(ProjectDir)"
-      Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot;"
-    />
-  </Target>
 </Project>

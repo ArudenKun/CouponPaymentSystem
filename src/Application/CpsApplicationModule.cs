@@ -1,13 +1,11 @@
 ﻿using System.Reflection;
 using Abp.Configuration.Startup;
-using Abp.Dependency;
 using Abp.FluentValidation;
 using Abp.Modules;
 using Abp.ObjectMapping;
 using CouponPaymentSystem.Application.Authorization;
 using CouponPaymentSystem.Application.Common.Extensions;
 using CouponPaymentSystem.Application.Common.Mapping;
-using CouponPaymentSystem.Application.Features.Uploads;
 using CouponPaymentSystem.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using Sqids;

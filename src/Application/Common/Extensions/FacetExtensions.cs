@@ -23,6 +23,37 @@ public static class FacetExtensions
             : (TTarget)Activator.CreateInstance(typeof(TTarget), source)!;
 
     /// <summary>
+    /// Maps a single source instance to the specified existing facet type.
+    /// </summary>
+    /// <typeparam name="TSource">The source entity type.</typeparam>
+    /// <typeparam name="TTarget">The facet type, which must have a public constructor accepting <c>TSource</c>.</typeparam>
+    /// <param name="source">The source instance to map.</param>
+    /// <param name="target">The existing target instance to map </param>
+    /// <returns>A new <typeparamref name="TTarget"/> instance populated from <paramref name="source"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <c>null</c>.</exception>
+    public static void ToFacet<TSource, TTarget>(this TSource source, TTarget target)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        // Create a temporary mapped instance using the constructor
+        var temp = (TTarget)Activator.CreateInstance(typeof(TTarget), source)!;
+        var targetType = typeof(TTarget);
+        var targetProperties = targetType.GetProperties();
+
+        foreach (var targetProperty in targetProperties)
+        {
+            if (!targetProperty.CanWrite)
+                continue;
+
+            var value = targetProperty.GetValue(temp);
+            targetProperty.SetValue(target, value);
+        }
+    }
+
+    /// <summary>
     /// Maps an <see cref="IEnumerable{TSource}"/> to an <see cref="IEnumerable{TTarget}"/>
     /// via the generated constructor of the facet type.
     /// </summary>
@@ -67,56 +98,5 @@ public static class FacetExtensions
 
         var expr = (Expression<Func<TSource, TTarget>>)prop.GetValue(null)!;
         return source.Select(expr);
-    }
-
-    // -------------------
-    // Type-based overloads
-    // -------------------
-
-    public static object ToFacet(this object source, Type targetType)
-    {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-        if (targetType is null)
-            throw new ArgumentNullException(nameof(targetType));
-
-        return Activator.CreateInstance(targetType, source)!;
-    }
-
-    public static IEnumerable<object> SelectFacets(this IEnumerable<object> source, Type targetType)
-    {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-        if (targetType is null)
-            throw new ArgumentNullException(nameof(targetType));
-
-        foreach (var item in source)
-            yield return item.ToFacet(targetType);
-    }
-
-    public static IQueryable SelectFacet(this IQueryable source, Type sourceType, Type targetType)
-    {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-        if (sourceType is null)
-            throw new ArgumentNullException(nameof(sourceType));
-        if (targetType is null)
-            throw new ArgumentNullException(nameof(targetType));
-
-        var prop = targetType.GetProperty("Projection", BindingFlags.Public | BindingFlags.Static);
-
-        if (prop is null)
-            throw new InvalidOperationException(
-                $"Type {targetType.Name} must define a public static Projection property."
-            );
-
-        var expr = prop.GetValue(null);
-
-        var selectMethod = typeof(Queryable)
-            .GetMethods(BindingFlags.Static | BindingFlags.Public)
-            .First(m => m.Name == "Select" && m.GetParameters().Length == 2)
-            .MakeGenericMethod(sourceType, targetType);
-
-        return (IQueryable)selectMethod.Invoke(null, [source, expr])!;
     }
 }

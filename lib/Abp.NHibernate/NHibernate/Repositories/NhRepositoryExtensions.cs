@@ -42,7 +42,7 @@ public static class NhRepositoryExtensions
 
         var session = repository.GetSession();
 
-        var entityList = entities.AsList();
+        var entityList = entities.ToList();
         if (entityList.Count == 0)
             return;
 
@@ -157,7 +157,7 @@ public static class NhRepositoryExtensions
         return expression;
     }
 
-    private static Guid? GetCurrentTenantIdOrNull(IIocResolver iocResolver)
+    private static int? GetCurrentTenantIdOrNull(IIocResolver iocResolver)
     {
         IEntityPersister entityPersister;
         using var scope = iocResolver.CreateScope();

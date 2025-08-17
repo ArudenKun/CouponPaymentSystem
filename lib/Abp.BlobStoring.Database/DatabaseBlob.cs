@@ -14,7 +14,7 @@ public class DatabaseBlob : AggregateRoot<Guid>, IMayHaveTenant
         Guid containerId,
         string name,
         byte[] content,
-        Guid? tenantId = null
+        int? tenantId = null
     )
     {
         Id = id;
@@ -26,7 +26,7 @@ public class DatabaseBlob : AggregateRoot<Guid>, IMayHaveTenant
 
     public virtual Guid ContainerId { get; protected set; }
 
-    public virtual Guid? TenantId { get; set; }
+    public virtual int? TenantId { get; set; }
 
     public virtual string Name { get; protected set; } = string.Empty;
 

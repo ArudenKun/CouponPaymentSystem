@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource
+      Include="Localization\Sources\AbpXmlSource\*.xml;Timing\Timezone\Mapping\*.xml"
+      Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.8" />
+    <PackageReference Include="Nito.AsyncEx.Context" Version="5.1.2" />
+    <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.8" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.7" />
+    <PackageReference Include="System.Text.Json" Version="9.0.8" />
+    <PackageReference Include="TimeZoneConverter" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Castle.Core.AsyncInterceptor\Castle.Core.AsyncInterceptor.csproj" />
+    <ProjectReference Include="..\Castle.Windsor\Castle.Windsor.csproj" />
+  </ItemGroup>
+</Project>

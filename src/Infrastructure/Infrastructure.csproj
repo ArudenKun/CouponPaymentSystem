@@ -4,23 +4,18 @@
     <RootNamespace>CouponPaymentSystem.Infrastructure</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Abp.HangFire" />
-    <PackageReference Include="Aoxe.SystemIoCompression" />
-    <PackageReference Include="AsyncKeyedLock" />
-    <PackageReference Include="CSharpier.MsBuild">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Hangfire.SqlServer" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="Polyfill">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Aoxe.SystemIoCompression" Version="2025.2.0" />
+    <PackageReference Include="AsyncKeyedLock" Version="7.1.6" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.21" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+    <PackageReference
+      Include="Microsoft.Extensions.Options.ConfigurationExtensions"
+      Version="9.0.8"
+    />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Abp.BlobStoring.Database.NHibernate\Abp.BlobStoring.Database.NHibernate.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.HangFire\Abp.HangFire.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 </Project>

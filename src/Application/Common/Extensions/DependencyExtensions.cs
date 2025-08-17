@@ -1,7 +1,7 @@
 ﻿using Abp.Dependency;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using Castle.Windsor.Microsoft.DependencyInjection;
+using Castle.Windsor.Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CouponPaymentSystem.Application.Common.Extensions;
