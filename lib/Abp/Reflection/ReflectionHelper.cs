@@ -5,7 +5,7 @@ namespace Abp.Reflection;
 /// <summary>
 /// Defines helper methods for reflection.
 /// </summary>
-internal static class ReflectionHelper
+public static class ReflectionHelper
 {
     /// <summary>
     /// Checks whether <paramref name="givenType"/> implements/inherits <paramref name="genericType"/>.
@@ -162,9 +162,9 @@ internal static class ReflectionHelper
     /// <param name="memberInfo">MemberInfo</param>
     /// <param name="defaultValue">Default value (null as default)</param>
     /// <param name="inherit">Inherit attribute from base classes</param>
-    public static TAttribute GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<TAttribute>(
+    public static TAttribute? GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<TAttribute>(
         MemberInfo memberInfo,
-        TAttribute defaultValue = default(TAttribute),
+        TAttribute? defaultValue = default,
         bool inherit = true
     )
         where TAttribute : class
@@ -186,9 +186,9 @@ internal static class ReflectionHelper
     /// <param name="memberInfo">MemberInfo</param>
     /// <param name="defaultValue">Default value (null as default)</param>
     /// <param name="inherit">Inherit attribute from base classes</param>
-    public static TAttribute GetSingleAttributeOrDefault<TAttribute>(
+    public static TAttribute? GetSingleAttributeOrDefault<TAttribute>(
         MemberInfo memberInfo,
-        TAttribute defaultValue = default(TAttribute),
+        TAttribute? defaultValue = default,
         bool inherit = true
     )
         where TAttribute : Attribute
@@ -212,11 +212,11 @@ internal static class ReflectionHelper
     /// <param name="objectType">Type of given object</param>
     /// <param name="propertyPath">Full path of property</param>
     /// <returns></returns>
-    internal static object GetPropertyByPath(object obj, Type objectType, string propertyPath)
+    internal static object? GetPropertyByPath(object obj, Type objectType, string propertyPath)
     {
         var property = obj;
         var currentType = objectType;
-        var objectPath = currentType.FullName;
+        var objectPath = currentType.FullName!;
         var absolutePropertyPath = propertyPath;
         if (absolutePropertyPath.StartsWith(objectPath))
         {
@@ -225,8 +225,8 @@ internal static class ReflectionHelper
 
         foreach (var propertyName in absolutePropertyPath.Split('.'))
         {
-            property = currentType.GetProperty(propertyName);
-            currentType = ((PropertyInfo)property).PropertyType;
+            property = currentType?.GetProperty(propertyName);
+            currentType = ((PropertyInfo?)property)?.PropertyType;
         }
 
         return property;
@@ -239,11 +239,11 @@ internal static class ReflectionHelper
     /// <param name="objectType">Type of given object</param>
     /// <param name="propertyPath">Full path of property</param>
     /// <returns></returns>
-    internal static object GetValueByPath(object obj, Type objectType, string propertyPath)
+    internal static object? GetValueByPath(object obj, Type objectType, string propertyPath)
     {
         var value = obj;
         var currentType = objectType;
-        var objectPath = currentType.FullName;
+        var objectPath = currentType.FullName!;
         var absolutePropertyPath = propertyPath;
         if (absolutePropertyPath.StartsWith(objectPath))
         {
@@ -252,9 +252,9 @@ internal static class ReflectionHelper
 
         foreach (var propertyName in absolutePropertyPath.Split('.'))
         {
-            var property = currentType.GetProperty(propertyName);
-            value = property.GetValue(value, null);
-            currentType = property.PropertyType;
+            var property = currentType?.GetProperty(propertyName);
+            value = property?.GetValue(value, null);
+            currentType = property?.PropertyType;
         }
 
         return value;
@@ -321,7 +321,7 @@ internal static class ReflectionHelper
             ) != null;
     }
 
-    internal static async Task<object> InvokeAsync(
+    internal static async Task<object?> InvokeAsync(
         MethodInfo method,
         object obj,
         params object[] parameters

@@ -7,7 +7,7 @@ namespace Abp.Localization.Sources;
 /// <summary>
 /// Null object pattern for <see cref="ILocalizationSource"/>.
 /// </summary>
-internal class NullLocalizationSource : ILocalizationSource
+public class NullLocalizationSource : ILocalizationSource
 {
     /// <summary>
     /// Singleton instance.

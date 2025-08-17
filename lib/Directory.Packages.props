@@ -1,5 +1,9 @@
 <Project>
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="all" />
+    <PackageReference Include="CSharpier.MsBuild" Version="1.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

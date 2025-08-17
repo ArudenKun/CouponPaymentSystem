@@ -7,11 +7,11 @@ public abstract class EntityChangeSetReasonProviderBase : IEntityChangeSetReason
 {
     public const string ReasonOverrideContextKey = "Abp.EntityHistory.Reason.Override";
 
-    public abstract string Reason { get; }
+    public abstract string? Reason { get; }
 
     public ILogger Logger { get; set; }
 
-    protected ReasonOverride OverridedValue =>
+    protected ReasonOverride? OverridedValue =>
         ReasonOverrideScopeProvider.GetValue(ReasonOverrideContextKey);
     protected IAmbientScopeProvider<ReasonOverride> ReasonOverrideScopeProvider { get; }
 

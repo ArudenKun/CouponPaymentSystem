@@ -6,7 +6,7 @@ namespace Abp.Reflection;
 /// <summary>
 /// Some simple type-checking methods used internally.
 /// </summary>
-internal static class TypeHelper
+public static class TypeHelper
 {
     private static readonly IReadOnlyList<string> SystemAssemblyNames = new List<string>
     {
@@ -14,7 +14,7 @@ internal static class TypeHelper
         "System.Private.CoreLib",
     };
 
-    public static bool IsFunc(object obj)
+    public static bool IsFunc(object? obj)
     {
         if (obj == null)
         {
@@ -30,7 +30,7 @@ internal static class TypeHelper
         return type.GetGenericTypeDefinition() == typeof(Func<>);
     }
 
-    public static bool IsFunc<TReturn>(object obj)
+    public static bool IsFunc<TReturn>(object? obj)
     {
         return obj != null && obj.GetType() == typeof(Func<TReturn>);
     }
@@ -76,10 +76,10 @@ internal static class TypeHelper
     public static StringBuilder SerializeType(
         Type type,
         bool withAssemblyName = true,
-        StringBuilder typeNameBuilder = null
+        StringBuilder? typeNameBuilder = null
     )
     {
-        typeNameBuilder = typeNameBuilder ?? new StringBuilder();
+        typeNameBuilder ??= new StringBuilder();
 
         if (type.DeclaringType != null)
         {
@@ -94,7 +94,7 @@ internal static class TypeHelper
 
         if (type.GenericTypeArguments.Length > 0)
         {
-            SerializeTypes(type.GenericTypeArguments, '[', ']', typeNameBuilder);
+            _ = SerializeTypes(type.GenericTypeArguments, '[', ']', typeNameBuilder);
         }
 
         if (!withAssemblyName)
@@ -112,11 +112,11 @@ internal static class TypeHelper
         return typeNameBuilder;
     }
 
-    private static StringBuilder SerializeTypes(
-        Type[] types,
+    private static StringBuilder? SerializeTypes(
+        Type[]? types,
         char beginTypeDelimiter = '"',
         char endTypeDelimiter = '"',
-        StringBuilder typeNamesBuilder = null
+        StringBuilder? typeNamesBuilder = null
     )
     {
         if (types == null)

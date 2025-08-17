@@ -114,7 +114,7 @@ public static class StringExtensions
     /// Indicates whether this string is null or an System.String.Empty string.
     /// </summary>
     [ContractAnnotation("null => true")]
-    public static bool IsNullOrEmpty(this string str)
+    public static bool IsNullOrEmpty(this string? str)
     {
         return string.IsNullOrEmpty(str);
     }
@@ -123,7 +123,7 @@ public static class StringExtensions
     /// indicates whether this string is null, empty, or consists only of white-space characters.
     /// </summary>
     [ContractAnnotation("null => true")]
-    public static bool IsNullOrWhiteSpace(this string str)
+    public static bool IsNullOrWhiteSpace(this string? str)
     {
         return string.IsNullOrWhiteSpace(str);
     }
@@ -133,7 +133,7 @@ public static class StringExtensions
     /// </summary>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="str"/> is null</exception>
     /// <exception cref="ArgumentException">Thrown if <paramref name="len"/> is bigger that string's length</exception>
-    public static string Left(this string str, int len)
+    public static string Left(this string? str, int len)
     {
         if (str == null)
         {

@@ -1,5 +1,4 @@
 using Abp.Dependency;
-using JetBrains.Annotations;
 
 namespace Abp.Web.Http;
 
@@ -15,9 +14,9 @@ public class AbpUrlHelper : IUrlHelper, ISingletonDependency
     /// <param name="localPort"></param>
     /// <returns></returns>
     public virtual string LocalPathAndQuery(
-        [NotNull] string url,
-        [CanBeNull] string localHostName = null,
-        [CanBeNull] int? localPort = null
+        string url,
+        string? localHostName = null,
+        int? localPort = null
     )
     {
         Check.NotNull(url, nameof(url));

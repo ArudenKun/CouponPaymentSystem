@@ -43,4 +43,11 @@ public static class StreamExtensions
             cancellationToken
         );
     }
+
+    public static long TrySeek(this Stream stream, long offset, SeekOrigin seekOrigin)
+    {
+        if (stream is null)
+            throw new ArgumentNullException(nameof(stream));
+        return stream.CanSeek ? stream.Seek(offset, seekOrigin) : -1;
+    }
 }

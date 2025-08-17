@@ -186,7 +186,7 @@ public class UnitOfWorkAttribute : Attribute
         Timeout = TimeSpan.FromMilliseconds(timeout);
     }
 
-    internal UnitOfWorkOptions CreateOptions()
+    public UnitOfWorkOptions CreateOptions()
     {
         return new UnitOfWorkOptions
         {

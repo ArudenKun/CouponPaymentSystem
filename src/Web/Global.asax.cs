@@ -54,11 +54,11 @@ public class MvcApplication : AbpWebApplication<CpsModule>
     {
 #if DEBUG
         AbpBootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f =>
-            f.UseAbpLog4Net().WithConfig(Server.MapPath("log4net.config"))
+            f.UseAbpLog4Net().WithConfig(Server.MapPath("log4net.dev.config"))
         );
 #else
         AbpBootstrapper.IocManager.IocContainer.AddFacility<LoggingFacility>(f =>
-            f.UseAbpLog4Net().WithConfig(Server.MapPath("log4net.Production.config"))
+            f.UseAbpLog4Net().WithConfig(Server.MapPath("log4net.config"))
         );
 #endif
 

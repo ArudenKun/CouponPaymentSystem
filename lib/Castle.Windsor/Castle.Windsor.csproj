@@ -4,9 +4,7 @@
     <RootNamespace>Castle</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Castle.Core\Castle.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.8" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>

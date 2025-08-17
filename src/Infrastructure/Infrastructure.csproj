@@ -4,7 +4,6 @@
     <RootNamespace>CouponPaymentSystem.Infrastructure</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Aoxe.SystemIoCompression" Version="2025.2.0" />
     <PackageReference Include="AsyncKeyedLock" Version="7.1.6" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.21" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
@@ -15,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Abp.BlobStoring.Database.NHibernate\Abp.BlobStoring.Database.NHibernate.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.Castle.Log4Net\Abp.Castle.Log4Net.csproj" />
     <ProjectReference Include="..\..\lib\Abp.HangFire\Abp.HangFire.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>

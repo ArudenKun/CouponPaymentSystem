@@ -38,7 +38,7 @@ public static class DictionaryExtensions
     /// <typeparam name="TKey">Type of the key</typeparam>
     /// <typeparam name="TValue">Type of the value</typeparam>
     /// <returns>Value if found, default if can not found.</returns>
-    public static TValue GetOrDefault<TKey, TValue>(
+    public static TValue? GetOrDefault<TKey, TValue>(
         this IDictionary<TKey, TValue> dictionary,
         TKey key
     )

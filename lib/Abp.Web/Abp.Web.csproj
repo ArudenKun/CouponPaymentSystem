@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <RootNamespace>Abp</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource
+      Include="Web\Localization\AbpWebXmlSource\*.xml"
+      Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Abp.Web.Common\Abp.Web.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
+    <Reference Include="System.Web" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+</Project>

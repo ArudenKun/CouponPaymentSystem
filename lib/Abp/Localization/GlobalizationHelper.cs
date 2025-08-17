@@ -3,9 +3,9 @@ using Abp.Extensions;
 
 namespace Abp.Localization;
 
-internal static class GlobalizationHelper
+public static class GlobalizationHelper
 {
-    public static bool IsValidCultureCode(string cultureCode)
+    public static bool IsValidCultureCode(string? cultureCode)
     {
         if (cultureCode.IsNullOrWhiteSpace())
         {
@@ -16,7 +16,7 @@ internal static class GlobalizationHelper
         {
             return CultureInfo
                 .GetCultures(CultureTypes.AllCultures)
-                .Any(e => e.Name.ToLowerInvariant() == cultureCode.ToLowerInvariant());
+                .Any(e => e.Name.ToLowerInvariant() == cultureCode!.ToLowerInvariant());
         }
         catch (CultureNotFoundException)
         {

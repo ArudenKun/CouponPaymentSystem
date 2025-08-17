@@ -8,7 +8,7 @@ public interface IEntityChangeSetReasonProvider
     /// <summary>
     /// Gets current Reason or null.
     /// </summary>
-    string Reason { get; }
+    string? Reason { get; }
 
     /// <summary>
     /// Used to change <see cref="Reason"/> for a limited scope.

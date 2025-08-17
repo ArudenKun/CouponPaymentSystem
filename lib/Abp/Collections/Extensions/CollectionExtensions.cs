@@ -10,13 +10,14 @@ public static class CollectionExtensions
     /// <summary>
     /// Checks whatever given collection object is null or has no item.
     /// </summary>
-    public static bool IsNullOrEmpty<T>(this ICollection<T> source)
+    public static bool IsNullOrEmpty<T>(this ICollection<T>? source)
     {
         return source == null || source.Count <= 0;
     }
 
-    public static bool IsNullOrEmpty(this IEnumerable @this)
+    public static bool IsNullOrEmpty(this IEnumerable? @this)
     {
+        // ReSharper disable once GenericEnumeratorNotDisposed
         return @this == null || @this.GetEnumerator().MoveNext() == false;
     }
 

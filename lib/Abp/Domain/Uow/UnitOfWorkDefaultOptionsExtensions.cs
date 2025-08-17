@@ -2,9 +2,9 @@
 
 namespace Abp.Domain.Uow;
 
-internal static class UnitOfWorkDefaultOptionsExtensions
+public static class UnitOfWorkDefaultOptionsExtensions
 {
-    public static UnitOfWorkAttribute GetUnitOfWorkAttributeOrNull(
+    public static UnitOfWorkAttribute? GetUnitOfWorkAttributeOrNull(
         this IUnitOfWorkDefaultOptions unitOfWorkDefaultOptions,
         MethodInfo methodInfo
     )

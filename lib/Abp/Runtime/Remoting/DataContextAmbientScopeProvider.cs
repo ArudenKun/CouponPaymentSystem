@@ -9,12 +9,11 @@ public class DataContextAmbientScopeProvider<T> : IAmbientScopeProvider<T>
 {
     public ILogger Logger { get; set; }
 
-    private static readonly ConcurrentDictionary<string, ScopeItem> ScopeDictionary =
-        new ConcurrentDictionary<string, ScopeItem>();
+    private static readonly ConcurrentDictionary<string, ScopeItem> ScopeDictionary = new();
 
     private readonly IAmbientDataContext _dataContext;
 
-    public DataContextAmbientScopeProvider([NotNull] IAmbientDataContext dataContext)
+    public DataContextAmbientScopeProvider(IAmbientDataContext dataContext)
     {
         Check.NotNull(dataContext, nameof(dataContext));
 
@@ -23,7 +22,7 @@ public class DataContextAmbientScopeProvider<T> : IAmbientScopeProvider<T>
         Logger = NullLogger.Instance;
     }
 
-    public T GetValue(string contextKey)
+    public T? GetValue(string contextKey)
     {
         var item = GetCurrentItem(contextKey);
         if (item == null)
@@ -59,7 +58,7 @@ public class DataContextAmbientScopeProvider<T> : IAmbientScopeProvider<T>
         });
     }
 
-    private ScopeItem GetCurrentItem(string contextKey)
+    private ScopeItem? GetCurrentItem(string contextKey)
     {
         var objKey = _dataContext.GetData(contextKey) as string;
         return objKey != null ? ScopeDictionary.GetOrDefault(objKey) : null;
@@ -69,11 +68,11 @@ public class DataContextAmbientScopeProvider<T> : IAmbientScopeProvider<T>
     {
         public string Id { get; }
 
-        public ScopeItem Outer { get; }
+        public ScopeItem? Outer { get; }
 
         public T Value { get; }
 
-        public ScopeItem(T value, ScopeItem outer = null)
+        public ScopeItem(T value, ScopeItem? outer = null)
         {
             Id = Guid.NewGuid().ToString();
 

@@ -30,5 +30,5 @@ public interface IScopeAccessor : IDisposable
     /// </summary>
     /// <param name = "context">Current creation context</param>
     /// <exception cref = "T:System.InvalidOperationException"> Thrown when scope cache could not be accessed.</exception>
-    ILifetimeScope GetScope(CreationContext context);
+    ILifetimeScope? GetScope(CreationContext context);
 }

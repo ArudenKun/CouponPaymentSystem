@@ -19,6 +19,7 @@
     <Content Include="Views\**\*.cshtml" />
     <Content Include="Views\**\*.js" />
     <Content Include="Views\Web.config" />
+    <Content Include="log4net.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\launchSettings.json" />
@@ -45,6 +46,8 @@
     <Folder Include="Content\lib\jquery\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\lib\Abp.Owin\Abp.Owin.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.Web.Mvc\Abp.Web.Mvc.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 </Project>
