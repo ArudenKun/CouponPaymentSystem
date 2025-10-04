@@ -1,0 +1,44 @@
+<Project Sdk="MSBuild.SDK.SystemWeb/4.0.104">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <UsingMSBuildSDKSystemWeb>true</UsingMSBuildSDKSystemWeb>
+    <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
+    <MicrosoftNetCompilersToolset_Version>4.14.0</MicrosoftNetCompilersToolset_Version>
+    <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
+    <NoWarn>$(NoWarn);</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+    <Content Include="Content\**\*.*" />
+    <Content Include="Views\**\*.cshtml" />
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Content\Lib\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libman.json" />
+    <None Include="Properties\launchSettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Abp.Castle.Log4Net" />
+    <PackageReference Include="Abp.Owin" />
+    <PackageReference Include="Abp.Web.Api" />
+    <PackageReference Include="Abp.Web.Mvc" />
+    <PackageReference Include="Abp.Web.SignalR" />
+    <PackageReference Include="Abp.Zero.Owin" />
+    <PackageReference Include="BundleTransformer.NUglify" />
+    <PackageReference Include="Hangfire.AspNet" />
+    <PackageReference Include="Microsoft.AspNet.SignalR" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
