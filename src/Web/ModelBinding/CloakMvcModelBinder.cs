@@ -25,7 +25,7 @@ internal sealed class CloakMvcModelBinder : DefaultModelBinder, ISingletonDepend
             bindingContext.ModelMetadata.PropertyName ?? string.Empty
         );
 
-        if (propertyInfo == null || !Attribute.IsDefined(propertyInfo, typeof(CloakAttribute)))
+        if (propertyInfo is null || !Attribute.IsDefined(propertyInfo, typeof(CloakAttribute)))
             return base.BindModel(controllerContext, bindingContext);
 
         // Get the raw value from request

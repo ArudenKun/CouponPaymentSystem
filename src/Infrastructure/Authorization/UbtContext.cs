@@ -4,8 +4,8 @@ internal record UbtContext(
     string DomainId,
     string FirstName,
     string LastName,
-    string RoleId,
+    int RoleId,
     string RoleName,
-    string DivisionId,
+    int DivisionId,
     string DivisionName
 );

@@ -1,0 +1,14 @@
+﻿@using System.Globalization
+@using Abp.Timing
+
+@Scripts.Render("~/bundles/shared/js/layout")
+@* <script src="~/Content/view-resources/Views/_Bundles/shared-layout.min.js" asp-append-version="true"></script> *@
+<script type="text/javascript">
+    var abp = abp || {};
+    abp.appPath = '@ApplicationPath';
+</script>
+<script type="text/javascript">
+    moment.locale('@CultureInfo.CurrentUICulture.Name');
+</script>
+<script src="~/api/AbpServiceProxies/GetAll?v=@(Clock.Now.Ticks)"></script>
+<script src="~/AbpScripts/GetScripts?v=@(Clock.Now.Ticks)" type="text/javascript"></script>

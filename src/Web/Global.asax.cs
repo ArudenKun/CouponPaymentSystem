@@ -19,6 +19,7 @@ public class MvcApplication : AbpWebApplication<WebModule>
     public void Configuration(IAppBuilder app)
     {
         app.UseAbp();
+        app.UseStaticFiles();
         app.UseHttpOnlyAntiforgeryToken();
         app.UseCookieAuthentication(new CookieAuthenticationOptions { });
         app.UseHangfireAspNet(() =>

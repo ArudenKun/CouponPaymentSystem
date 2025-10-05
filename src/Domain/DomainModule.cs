@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
 using Abp.Modules;
+using Abp.Timing;
 using Abp.Zero;
 using Abp.Zero.Configuration;
 using Domain.Authorization;
+using Domain.Common;
 using Domain.Roles;
 using Domain.Tenants;
 using Domain.Users;
@@ -32,5 +34,10 @@ public sealed class DomainModule : AbpModule
     public override void Initialize()
     {
         IocManager.RegisterAssemblyByConvention(Assembly.GetExecutingAssembly());
+    }
+
+    public override void PostInitialize()
+    {
+        IocManager.Resolve<AppTimes>().StartupTime = Clock.Now;
     }
 }

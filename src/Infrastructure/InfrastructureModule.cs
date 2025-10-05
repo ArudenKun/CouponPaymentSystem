@@ -8,6 +8,7 @@ using Abp.Dependency;
 using Abp.EntityHistory;
 using Abp.Modules;
 using Abp.NHibernate;
+using Abp.Zero.Configuration;
 using Application;
 using Castle.Windsor.Microsoft.DependencyInjection;
 using Cloaked;
@@ -17,6 +18,7 @@ using Domain.Configuration;
 using FluentNHibernate.Cfg.Db;
 using Hangfire;
 using Hangfire.SqlServer;
+using Infrastructure.Authorization;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.EventListeners;
 using Microsoft.Extensions.Configuration;
@@ -49,17 +51,17 @@ public sealed class InfrastructureModule : AbpModule
         IocManager.Register<IFlushEventListener, FlushEventListener>(DependencyLifeStyle.Transient);
 
         var basePath = HostingEnvironment.MapPath("~/") ?? AppDomain.CurrentDomain.BaseDirectory;
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", true, true)
-            .AddJsonFile($"appsettings.{EnvironmentHelper.EnvironmentName}.json", true, true)
-            .Build();
+        var configuration = AppConfigurations.Get(basePath, EnvironmentHelper.EnvironmentName);
         var services = new ServiceCollection();
         services.AddSingleton(configuration);
         services.AddSingleton<IConfiguration>(sp => sp.GetRequiredService<IConfigurationRoot>());
         services.ConfigureOptions<ValidateCpsOptions>();
         services.AddConfiguration();
         IocManager.IocContainer.AddServices(services);
+
+        Configuration
+            .Modules.Zero()
+            .UserManagement.ExternalAuthenticationSources.Add<UbtAuthenticationSource>();
 
         Configuration.DefaultNameOrConnectionString = IocManager
             .Resolve<IOptions<CpsOptions>>()

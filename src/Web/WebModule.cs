@@ -9,8 +9,12 @@ using Abp.Web.Mvc;
 using Abp.Web.SignalR;
 using Abp.WebApi;
 using Abp.WebApi.Configuration;
+using BundleTransformer.Core.Bundles;
+using BundleTransformer.Core.Resolvers;
 using Castle.MicroKernel.Registration;
+using Cps.Core.Common;
 using Infrastructure;
+using JetBrains.Annotations;
 using Microsoft.Owin.Security;
 using Web.Json;
 using Web.ModelBinding;
@@ -51,6 +55,7 @@ public sealed class WebModule : AbpModule
             IocManager.Resolve<CpsWebContractResolver>();
     }
 
+    [UsedImplicitly]
     private static void RegisterFilters(GlobalFilterCollection filters) { }
 
     private static void RegisterRoutes(RouteCollection routes)
@@ -74,5 +79,19 @@ public sealed class WebModule : AbpModule
         );
     }
 
-    private static void RegisterBundles(BundleCollection bundles) { }
+    private static void RegisterBundles(BundleCollection bundles)
+    {
+        BundleTable.EnableOptimizations = !DebugHelper.IsDebug;
+        BundleResolver.Current = new CustomBundleResolver();
+        bundles.Add(
+            new CustomScriptBundle("~/bundles/shared/js/layout").Include(
+                "~/Content/view-resources/Views/_Bundles/shared-layout.min.js"
+            )
+        );
+        bundles.Add(
+            new CustomStyleBundle("~/bundles/shared/css/layout").Include(
+                "~/Content/view-resources/Views/_Bundles/shared-layout.min.css"
+            )
+        );
+    }
 }

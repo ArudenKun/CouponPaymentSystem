@@ -2,7 +2,7 @@
 
 namespace Web.Controllers;
 
-public class HomeController : WebControllerBase
+public class HomeController : CpsControllerBase
 {
     public ActionResult Index()
     {

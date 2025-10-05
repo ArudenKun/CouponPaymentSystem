@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SqlClient;
 using Abp;
 using Abp.Authorization.Users;
-using Abp.Dependency;
 using Dapper;
 using Domain.Configuration;
 using Domain.Tenants;
@@ -13,98 +12,128 @@ namespace Infrastructure.Authorization;
 
 internal class UbtAuthenticationSource : DefaultExternalAuthenticationSource<Tenant, User>
 {
-    private static readonly ConcurrentDictionary<string, string> SessionCache = new();
+    private static readonly ConcurrentDictionary<string, long> Sessions = new();
 
     private readonly CpsOptions _options;
-    private readonly IIocResolver _iocResolver;
 
-    public UbtAuthenticationSource(CpsOptions options, IIocResolver iocResolver)
+    public UbtAuthenticationSource(CpsOptions options)
     {
         _options = options;
-        _iocResolver = iocResolver;
     }
 
     public override string Name => "UBT";
 
-
     /// <inheritdoc/>
-    public override async Task<bool> TryAuthenticateAsync(
-        string sessionId,
-        string _,
-        Tenant tenant
-    )
+    public override async Task<bool> TryAuthenticateAsync(string sessionId, string _, Tenant tenant)
     {
         if (string.IsNullOrEmpty(sessionId))
             return false;
 
+        if (!long.TryParse(sessionId, out var sid))
+            return false;
+
         using var conn = await CreateUbtConnectionAsync();
-        var result = await conn.QueryFirstOrDefaultDictionaryAsync("sp_CheckSessionLoginIsValid",
-            new { Session_ID = sessionId, sys_ID = _options.SysId }, commandType: CommandType.StoredProcedure);
+        var result = await conn.QueryFirstOrDefaultDictionaryAsync(
+            "sp_CheckSessionLoginIsValid",
+            new { Session_ID = sid, sys_ID = _options.SysId },
+            commandType: CommandType.StoredProcedure
+        );
 
         if (result is null)
             return false;
-        
-        
+
+        var authResult = new UbtAuthResult(
+            (int)result.ElementAtOrDefault(0).Value,
+            result.ElementAtOrDefault(1).Value as string ?? ""
+        );
+
+        var ubtContext = await CreateUbtContextAsync(sid);
+        if (ubtContext is null)
+            return false;
+
+        Sessions[ubtContext.DomainId] = sid;
+        return authResult.Code switch
+        {
+            3 => true,
+            _ => false,
+        };
     }
 
     /// <inheritdoc/>
-    public override async Task<User> CreateUserAsync(string userNameOrEmailAddress, Tenant tenant)
+    public override async Task<User> CreateUserAsync(string sessionId, Tenant tenant)
     {
-        var user = await base.CreateUserAsync(userNameOrEmailAddress, tenant);
-        var ubtContext = await CreateUbtContextAsync(userNameOrEmailAddress);
-        if (ubtContext == null)
+        if (!int.TryParse(sessionId, out var sid))
         {
-            throw new AbpException(
-                "Failed to fetch user details for session:" + userNameOrEmailAddress
-            );
+            throw new AbpException("Invalid Session");
         }
 
-        UpdateUserFromPrincipal(user);
+        var ubtContext = await CreateUbtContextAsync(sid);
+        if (ubtContext is null)
+        {
+            throw new AbpException($"Invalid Session {sid}");
+        }
 
+        var user = await base.CreateUserAsync(ubtContext.DomainId, tenant);
+        if (user is null)
+        {
+            throw new AbpException("Failed to create user:" + ubtContext.DomainId);
+        }
+
+        user.UserName = ubtContext.DomainId;
+        user.Name = ubtContext.FirstName;
+        user.Surname = ubtContext.LastName;
+        user.TenantId = ubtContext.DivisionId;
         user.IsEmailConfirmed = true;
         user.IsActive = true;
-
         return user;
     }
 
     public override async Task UpdateUserAsync(User user, Tenant tenant)
     {
-        var principalContext = await CreateUbtContextAsync(tenant, user);
-        using ()
+        var sid = Sessions[user.UserName];
+        var ubtContext = await CreateUbtContextAsync(sid);
+        if (ubtContext is null)
         {
-            var userPrincipal = FindUserPrincipalByIdentity(principalContext, user.UserName);
-
-            if (userPrincipal == null)
-            {
-                throw new AbpException("Unknown LDAP user: " + user.UserName);
-            }
-
-            UpdateUserFromPrincipal(user, userPrincipal);
+            throw new AbpException("Failed to update: " + user.UserName);
         }
+
+        user.UserName = ubtContext.DomainId;
+        user.Name = ubtContext.FirstName;
+        user.Surname = ubtContext.LastName;
+        user.TenantId = ubtContext.DivisionId;
     }
 
-    protected virtual void UpdateUserFromPrincipal(User user, UbtContext context)
+    protected virtual async Task<UbtContext?> CreateUbtContextAsync(long sessionId)
     {
-        user.UserName = context.DomainId;
-        user.Name = context.FirstName;
-        user.Surname = context.LastName;
-    }
+        using var connection = await CreateUbtConnectionAsync();
+        var user = await connection.QueryFirstOrDefaultAsync(
+            "sp_GetUserCredentials",
+            new { sessionID = sessionId },
+            commandType: CommandType.StoredProcedure
+        );
+        var division = await connection.QueryFirstOrDefaultAsync(
+            "sp_GetUserDivision",
+            new { sessionID = sessionId },
+            commandType: CommandType.StoredProcedure
+        );
 
-    protected virtual async Task<UbtContext?> CreateUbtContextAsync(string sessionId)
-    {
+        if (user is null || division is null)
+            return null;
+
         return new UbtContext(
-            contextType,
-            ConvertToNullIfEmpty(await _settings.GetDomain(tenant?.Id)),
-            ConvertToNullIfEmpty(await _settings.GetContainer(tenant?.Id)),
-            options,
-            ConvertToNullIfEmpty(await _settings.GetUserName(tenant?.Id)),
-            ConvertToNullIfEmpty(await _settings.GetPassword(tenant?.Id))
+            user.usr_UserID,
+            user.usr_Fname,
+            user.userLname,
+            user.App_Role_ID,
+            user.App_Role_Name,
+            division.usr_DivID,
+            division.Division_Name
         );
     }
 
     private async Task<SqlConnection> CreateUbtConnectionAsync()
     {
-        var conn = new SqlConnection(_options.ConnectionString);
+        var conn = new SqlConnection(_options.Aso.ConnectionString);
         await conn.OpenAsync();
         return conn;
     }
@@ -112,10 +141,14 @@ internal class UbtAuthenticationSource : DefaultExternalAuthenticationSource<Ten
 
 file static class Extensions
 {
-    public static async Task<IDictionary<string, object>?> QueryFirstOrDefaultDictionaryAsync(this IDbConnection conn,
+    public static async Task<IDictionary<string, object>?> QueryFirstOrDefaultDictionaryAsync(
+        this IDbConnection conn,
         string sql,
-        object? param = null, IDbTransaction? transaction = null, bool buffered = true, int? commandTimeout = null,
-        CommandType? commandType = null)
+        object? param = null,
+        IDbTransaction? transaction = null,
+        int? commandTimeout = null,
+        CommandType? commandType = null
+    )
     {
         var result = await conn.QueryAsync(sql, param, transaction, commandTimeout, commandType);
         return result.OfType<IDictionary<string, object>>().FirstOrDefault();

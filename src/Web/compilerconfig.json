@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "Content/view-resources/Views/Shared/_Layout.css",
+    "inputFile": "Content/view-resources/Views/Shared/_Layout.scss"
+  },
+  {
+    "outputFile": "Content/css/style.css",
+    "inputFile": "Content/scss/style.scss"
+  }
+]
